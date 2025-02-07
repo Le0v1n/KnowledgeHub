@@ -232,3 +232,7 @@ GitHub 提供了一个备用的 SSH 端口（443），可以尝试使用该端�
 - **推荐优先方案**：切换到 HTTPS 协议，简单且无需额外配置。
 - 如果必须使用 SSH，配置 SSH 的代理或切换到 GitHub 的备用端口（443）。
 - 确保 Clash 的代理规则和网络环境无额外限制。
+
+# 知识来源
+- [DeepSeek](https://chat.deepseek.com/)
+- [ChatGPT-4o](https://lmarena.ai/)
