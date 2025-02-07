@@ -163,13 +163,46 @@
 | :-------- | ----- | :------------: | ----------------------------------------------------- |
 | `tracker` | `str` | `botsort.yaml` | 跟踪器类型，选择有 [`botsort.yaml`、`bytetrack.yaml`] |
 
+## 1.2. 训练集、验证集、测试集
+
+### 1.2.1. 分配策略
+
+- 训练集是`dataset.yaml`必须要有的字段
+- `val`和`test`不是必要的字段
+- 如果`val`和`test`同时存在，优先返回`val`
+
+### 1.2.2. batch size
+
+- 训练集：`batch`
+- 验证集：`batch * 2`
+
+```python
+# Dataloaders
+batch_size = self.batch_size // max(world_size, 1)
+self.train_loader = self.get_dataloader(
+    self.trainset, 
+    batch_size=batch_size, 
+    rank=LOCAL_RANK, 
+    mode="train"
+)
+if RANK in {-1, 0}:
+    # NOTE: 在训练DOTA数据集时，将批量大小翻倍可能会导致在处理包含超过2000个物体的图像时出现显存不足（OOM）的情况
+    # NOTE: When training DOTA dataset, double batch size could get OOM on images with >2000 objects.
+    self.test_loader = self.get_dataloader(
+        self.testset, 
+        batch_size=batch_size if self.args.task == "obb" else batch_size * 2, 
+        rank=-1, 
+        mode="val"
+    )
+```
 
 
-## 1.2. 读取数据（图片-标签对）
+
+## 1.3. 读取数据（图片-标签对）
 
 使用多线程来读取图片，使用的是线程池的`imap函数`，该函数会调用`verify_image_label`函数对图片进行检查。
 
-### 1.2.1. 检查图片
+### 1.3.1. 检查图片
 
 1. 使用PIL库检查图片是否损坏
 
@@ -196,7 +229,7 @@
 
 > ⚠️图片不会去重，一个`.txt`中的行可以去重
 
-### 1.2.2. 检查标签
+### 1.3.2. 检查标签
 
 1. 判断标签是不是一个文件
 	- `True`：正常读取
@@ -207,7 +240,7 @@
 		- 生成一个`ndarray`
 	- `False`：认为不是一个文件或者不存在，那么就认为是一个负样本，生成一个空的`ndarray`
 
-### 1.2.3. try...except
+### 1.3.3. try...except
 
 在验证了图片和标签之后，如果有异常被抛出，`number corrupt += 1`，并且会打印一条消息：
 
@@ -218,7 +251,7 @@ except Exception as e:
     return [None, None, None, None, None, nm, nf, ne, nc, msg]
 ```
 
-### 1.2.4. 读取.cache
+### 1.3.4. 读取.cache
 
 > ⚠️注意缓存cache和缓冲buffer的区别
 
@@ -276,7 +309,7 @@ if len_cls == 0:
 
 	- 如果开启了，则需要对数据集中的batch按照宽高比进行排序，从而加速后面的处理过程
 
-### 1.2.5. 缓冲buffer
+### 1.3.5. 缓冲buffer
 
 1. 先检查是否需要数据增强
 
@@ -330,9 +363,9 @@ if len_cls == 0:
   > 	904K    coco128_VOC_style/VOC2007/images/000000000009.npya
   > 	```
 
-## 1.3. 数据增强
+## 1.4. 数据增强
 
-### 1.3.1. 流程图
+### 1.4.1. 流程图
 
 ```mermaid
 graph TB
@@ -352,7 +385,7 @@ subgraph Format[Format]
 end
 ```
 
-### 1.3.2. 标签格式
+### 1.4.2. 标签格式
 
 ```python
 labels = {
@@ -380,17 +413,17 @@ labels = {
 - `xywh` means center x, center y and width, height(YOLO format)
 - `ltwh` means left top and width, height(COCO format)
 
-### 1.3.3. num_workers
+### 1.4.3. num_workers
 
 - 如果是train模式，`workers`没有变化
 - 如果是val模式，`workers = workers * 2`
 
-### 1.3.4. Shuffle
+### 1.4.4. Shuffle
 
 - 如果`mode='train'`，`dataloader`开启`shuffle`，`val`和`predict`都不会开启`shuffle`。
 - 即便`mode='train'`，但如果开启了`rect`，那么`dataloader`也不会开启`shuffle`。
 
-### 1.3.5. Rect
+### 1.4.5. Rect
 
 在Ultralytics的目标检测项目（如YOLO系列）中，矩阵训练指的是**通过批量加载和处理数据以优化训练效率的机制**。矩阵训练的核心是让模型在训练时能够更高效地处理不同尺寸的输入图像，同时适应目标检测任务中的多样性。Ultralytics项目通过矩阵训练优化数据加载和增强过程，以加速训练并提升模型性能。
 
@@ -405,7 +438,7 @@ labels = {
 
 - 通过这种方式，<font color='red'><b>图像的长宽比例可以尽可能接近真实比例，从而减少失真问题，特别是在长宽比差异较大的数据集中</b></font>。
 
-#### 1.3.5.1. mosaic和rectangular training的直观对比
+#### 1.4.5.1. mosaic和rectangular training的直观对比
 
 下面是mosaic数据增强和矩阵训练的对比图：
 
@@ -418,7 +451,7 @@ labels = {
     <img src=./imgs_markdown/2025-01-15-10-05-23.png
     width=100%></br><center>rectangular training数据增强</center>
 </div>
-#### 1.3.5.2. 矩形训练的优势
+#### 1.4.5.2. 矩形训练的优势
 
 1. **减少图像失真**：保留原始宽高比，避免目标形状被拉伸或压缩。
 2. **更高的训练效率**：减少填充（padding）的空白区域，从而提高有效像素的利用率。
@@ -426,7 +459,7 @@ labels = {
 
 ---
 
-#### 1.3.5.3. 矩形训练和Mosaic、MixUp的冲突
+#### 1.4.5.3. 矩形训练和Mosaic、MixUp的冲突
 
 - 当`rect=True`时：
 
@@ -440,18 +473,18 @@ Mosaic是将4张图像拼接成一张图像的增强方法，通过随机裁剪�
 
 MixUp 数据增强是将两张图像按一定比例进行线性混合（像素和标签都混合），从而生成一个新的训练样本。同样会改变原始图像的宽高比，并且生成的图像可能不符合矩形训练的要求（导致宽高比的不确定性）。
 
-### 1.3.6. Letterbox
+### 1.4.6. Letterbox
 
-#### 1.3.6.1. 图片
+#### 1.4.6.1. 图片
 
-#### 1.3.6.2. 标签
+#### 1.4.6.2. 标签
 
 1. 将标签转换为xyxy格式
 2. 取消归一化
 3. 取消缩放
 4. 增加padding的范围
 
-### 1.3.7. Mosaic
+### 1.4.7. Mosaic
 
 - 概率`p`必须在$[0, 1]$之间
 
@@ -466,7 +499,7 @@ MixUp 数据增强是将两张图像按一定比例进行线性混合（像素�
 	> - 有分割标签：最小为`0.01`
 	> - 没有分割标签：最小为`0.10`
 
-### 1.3.8. Mixup
+### 1.4.8. Mixup
 
 - 论文地址：[mixup: Beyond Empirical Risk Minimization](https://arxiv.org/abs/1710.09412)
 
@@ -520,7 +553,7 @@ MixUp 数据增强是将两张图像按一定比例进行线性混合（像素�
         width=50%></br><center></center>
     </div>
 
-### 1.3.9. CopyPaste
+### 1.4.9. CopyPaste
 
 CopyPaste 类，用于对图像数据集应用复制粘贴增强。此类实现了论文《[Simple Copy-Paste is a Strong Data Augmentation Method for Instance Segmentation](https://arxiv.org/abs/2012.07177)》中描述的复制粘贴增强技术。它可以结合来自不同图像的对象以创建新的训练样本。
 
@@ -530,9 +563,9 @@ CopyPaste 类，用于对图像数据集应用复制粘贴增强。此类实现�
 > 1. flip
 > 2. mixup
 
-### 1.3.10. 注意事项
+### 1.4.10. 注意事项
 
-#### 1.3.10.1. 语义分割segment中的位图掩码
+#### 1.4.10.1. 语义分割segment中的位图掩码
 
 因为Ultralytics在进行数据增强的时候，`cls`信息是单独存放的，因此不像传统的语义分割那样，`GT`是一张灰度图，而是针对每一个类别的位图掩码，即：
 
@@ -548,13 +581,13 @@ CopyPaste 类，用于对图像数据集应用复制粘贴增强。此类实现�
 1 1 2
 ```
 
-## 1.4. dataloader
+## 1.5. dataloader
 
 - 只使用主线程构建dataloader对象
 - 🚨在进行`val`时，`rect=True`
 
 
-## 1.5. 自动计算batch
+## 1.6. 自动计算batch
 
 - `batch=-1`：自动计算60%GPU显存占用的batch size
 - `batch=0.8`：自动计算80%GPU显存占用的batch size
@@ -565,7 +598,7 @@ CopyPaste 类，用于对图像数据集应用复制粘贴增强。此类实现�
 
 该功能的核心函数为：`ultralytics/utils/autobatch.py/autobatch()`
 
-## 1.6. best.pt计算方式
+## 1.7. best.pt计算方式
 
 在 `ultralytics/utils/metrics.py` 文件中的 `Metric` 类的 `fitness()` 方法中：
 
@@ -599,7 +632,7 @@ Ultralytics 默认权重设置为 10% 的 `mAP@0.5` 和 90% 的 `mAP@0.5:0.95`�
 - 如果关注 **漏检**（Recall），应适当增加 Recall 的权重。
 - 如果关注 **误检**（Precision），应适当增加 Precision 的权重。
 
-## 1.7. imgsz
+## 1.8. imgsz
 
 - `train`和`val`模式的`imgsz`必须是一个整数，如`640`，之后程序会将其转换为`[640, 640]`
 - `predict`和`export`模式的`imgsz`可以是一个整数，如`640`，也可以是一个列表，如`[640, 480]`
@@ -618,7 +651,7 @@ yolo export imgsz=640       # ✅
 yolo export imgsz=640,480   # ✅
 ```
 
-## 1.8. grid cell
+## 1.9. grid cell
 
 grid cell的最小值为32，依据如下：
 
@@ -629,7 +662,7 @@ grid cell的最小值为32，依据如下：
 gs = max(int(self.model.stride.max() if hasattr(self.model, "stride") else 32), 32)  # grid size (max stride)
 ```
 
-## 1.9. AMP
+## 1.10. AMP
 
 1. 在`.train()`方法中开启了`amp=True`（默认开启）
 2. 在主线程中先备份回调函数防止在测试AMP时对其改动
@@ -648,7 +681,7 @@ gs = max(int(self.model.stride.max() if hasattr(self.model, "stride") else 32), 
 
 > 🔔不管AMP是否为True都会创建`torch.amp.GradScaler`，只不过`enabled=self.amp`
 
-## 1.10. 初始化策略
+## 1.11. 初始化策略
 
 ```python
 def initialize_weights(model):
@@ -666,7 +699,7 @@ def initialize_weights(model):
 
 > Issue链接：[Initialization of yolov8 #12677](https://github.com/ultralytics/ultralytics/issues/12677)
 
-### 1.10.1. Conv2d
+### 1.11.1. Conv2d
 
 glenn-jocher说是不使用kaiming初始化了，因此直接设置为`pass`，但是根据PyTorch官方代码，`nn.Conv2d`在创建时自动就应用了kaiming初始化方式，代码如下：
 
@@ -689,7 +722,7 @@ class _ConvNd(Module):
             init.uniform_(self.bias, -bound, bound)
 ```
 
-### 1.10.2. BatchNorm2d
+### 1.11.2. BatchNorm2d
 
 Ultralytics团队将其设置为：
 
@@ -883,7 +916,578 @@ CUDA_VISIBLE_DEVICES=0,1 python temp.py
 
 ## 2.2. 🌟Python
 
-### 2.2.1. os.access()
+### defaultdict
+
+`defaultdict` 是 Python 标准库 `collections` 模块中的一个类，它是 `dict` 的子类，用于提供一个默认值的字典。当访问一个不存在的键时，`defaultdict` 会自动为该键生成一个默认值，而不是抛出 `KeyError` 异常。
+
+1. 基本概念：
+
+	- 它接受一个默认值的生成函数作为参数。
+
+	- 当访问一个不存在的键时，`defaultdict` 会调用这个生成函数，为该键生成一个默认值。
+
+2. 构造函数：
+
+```python
+defaultdict(default_factory)
+```
+
+- **`default_factory`**：一个<font color='red'><b>函数</b></font>，用于生成默认值。如果为 `None`，则 `defaultdict` 的行为与普通字典相同。
+
+3. **使用示例**
+
+	1. **示例1**：使用 `defaultdict` 来统计单词出现的次数
+
+		```python
+		from collections import defaultdict
+		
+		# 创建一个默认值为 int 的 defaultdict
+		word_count = defaultdict(int)
+		
+		words = [
+		    "apple",
+		    "banana",
+		    "apple",  # 重复
+		    "cherry",
+		    "banana",  # 重复
+		    "apple"  # 重复
+		]
+		for word in words:
+		    word_count[word] += 1
+		
+		print(word_count)
+		```
+
+		```
+		defaultdict(<class 'int'>, {'apple': 3, 'banana': 2, 'cherry': 1})
+		```
+
+		> 💡其中的`<class 'int'>`表明这个字典的key如果不存在，那么默认创建的value
+
+	2. **示例2**：使用 `defaultdict` 来存储每个类别的数据
+
+		```python
+		from collections import defaultdict
+		
+		# 创建一个默认值为 list 的 defaultdict
+		data_by_category = defaultdict(list)
+		
+		data = [
+		    {"category": "fruit", "item": "apple"},
+		    {"category": "fruit", "item": "banana"},
+		    {"category": "vegetable", "item": "carrot"},
+		    {"category": "fruit", "item": "cherry"},
+		    {"category": "vegetable", "item": "broccoli"}
+		]
+		
+		for item in data:
+		    # 先访问data_by_category的key，如果这个key不存在则创建，默认的value是一个list
+		    # .append(item["item"])会为这个list追加一个元素
+		    data_by_category[item["category"]].append(item["item"])
+		
+		print(data_by_category)
+		```
+
+		```
+		defaultdict(<class 'list'>, {'fruit': ['apple', 'banana', 'cherry'], 'vegetable': ['carrot', 'broccoli']})
+		```
+
+	3. **示例3**：使用 `defaultdict` 来处理嵌套字典
+
+		```python
+		from collections import defaultdict
+		
+		# 创建一个默认值为 dict 的 defaultdict
+		nested_dict = defaultdict(dict)
+		
+		nested_dict["a"]["b"] = 1
+		nested_dict["a"]["c"] = 2
+		nested_dict["d"]["e"] = 3
+		
+		print(nested_dict)
+		```
+
+		```
+		defaultdict(<class 'dict'>, {'a': {'b': 1, 'c': 2}, 'd': {'e': 3}})
+		```
+
+4. **默认值生成函数**：`default_factory` 参数可以是任何可调用对象，例如：
+
+	- **`int`**：默认值为 0。
+
+	- **`list`**：默认值为一个空列表。
+
+	- **`dict`**：默认值为一个空字典。
+
+	- **`lambda`**：可以定义更复杂的默认值生成逻辑。
+
+	1. **示例4**：使用 `lambda` 定义默认值
+
+		```python
+		from collections import defaultdict
+		
+		# 创建一个默认值为 lambda 的 defaultdict
+		default_value = defaultdict(lambda: "default")
+		
+		print(default_value["key1"])  # 输出：default
+		print(default_value["key2"])  # 输出：default
+		```
+
+		```
+		default
+		default
+		```
+
+5. **优点**
+
+	- **避免 KeyError**：在访问不存在的键时，不会抛出 `KeyError`，而是返回默认值。
+
+	- **简化代码**：减少了对键存在性的检查，使代码更加简洁。
+
+	- **灵活性**：可以通过 `default_factory` 定义复杂的默认值生成逻辑。
+
+6. **注意事项**
+
+	- 如果需要访问 `default_factory`，可以通过 `defaultdict.default_factory` 属性访问。
+
+	- **如果需要将 `defaultdict` 转换为普通字典**，可以使用 `dict()` 函数：
+
+		```python
+		regular_dict = dict(nested_dict)
+		```
+
+7. **总结**：`defaultdict` 是一个非常实用的工具，特别适合在需要处理默认值或动态生成键值对的场景中使用。它能够简化代码逻辑，减少错误，并提高代码的可读性和可维护性。
+
+### 2.2.1. 回调函数
+
+#### 什么是回调函数？
+
+**回调函数**是一种在程序执行期间被“回调”（调用）的函数。它通常作为参数传递给另一个函数或类，然后在特定的时机由后者调用。回调函数的主要目的是让用户能够在特定事件发生时执行自定义的逻辑。
+
+#### 回调函数的作用
+
+在 Ultralytics 的 YOLOv8 中，回调函数的作用是**在训练、验证、推理等过程中插入自定义逻辑**。例如：
+- 在每个 epoch 开始或结束时执行某些操作（如记录日志、保存模型）。
+- 在每次训练 batch 完成后处理中间结果。
+- 在推理阶段做额外的后处理。
+
+这种机制让框架变得高度可扩展，允许用户根据自己的需求插入自定义行为，而无需修改核心代码。
+
+#### 现实生活中的类比
+
+回调函数可以类比为“闹钟提醒”或“事件通知”。
+
+##### 例子 1：闹钟提醒
+
+- 你设置了一个闹钟（回调函数），告诉闹钟在早上 7 点响（事件发生）。
+- 到了早上 7 点，闹钟会响起，提醒你起床（回调函数被触发）。
+
+##### 例子 2：送外卖
+
+- 你向外卖平台下单，告诉骑手“送到家门口后给我打电话”（回调函数）。
+- 骑手送到后打电话通知你（事件触发，回调被调用）。
+
+在这些例子中，回调函数的核心是：<font color='red'><b>在某个特定事件发生时，执行你事先定义好的行为</b></font>。
+
+---
+
+#### Python 中的回调函数例子
+
+##### 1. 基础回调函数
+
+以下是一个简单的例子，演示如何使用回调函数实现自定义逻辑：
+
+```python
+# 定义一个回调函数
+def my_callback(result):
+    print(f"Callback triggered! Result is: {result}")
+
+# 主函数，接受一个回调函数作为参数
+def process_data(data, callback):
+    # 模拟数据处理
+    result = sum(data)
+    # 调用回调函数
+    callback(result)
+
+# 使用回调函数
+data = [1, 2, 3, 4, 5]
+process_data(data, my_callback)
+```
+
+**输出：**
+```
+Callback triggered! Result is: 15
+```
+
+在这个例子中，`process_data` 函数在计算完成后调用了 `my_callback` 来处理结果。
+
+---
+
+#### **2. 现实应用：训练过程中的回调**
+
+在深度学习中，回调函数通常用来记录日志、保存模型、或者调整学习率。例如：
+
+```python
+# 一个简单的训练回调示例
+class Trainer:
+    def __init__(self, epochs, callback=None):
+        self.epochs = epochs
+        self.callback = callback  # 接受回调函数
+
+    def train(self):
+        for epoch in range(1, self.epochs + 1):
+            # 模拟训练过程
+            print(f"Epoch {epoch} training...")
+            
+            # 模拟训练结束后的结果
+            metrics = {"epoch": epoch, "loss": 0.01 * epoch}
+            
+            # 如果定义了回调函数，则调用回调
+            if self.callback:
+                self.callback(metrics)
+
+# 定义一个回调函数，用于记录日志
+def log_metrics(metrics):
+    print(f"Logging: Epoch {metrics['epoch']} Loss: {metrics['loss']}")
+
+# 使用 Trainer 并传入回调函数
+trainer = Trainer(epochs=5, callback=log_metrics)
+trainer.train()
+```
+
+**输出：**
+```
+Epoch 1 training...
+Logging: Epoch 1 Loss: 0.01
+Epoch 2 training...
+Logging: Epoch 2 Loss: 0.02
+Epoch 3 training...
+Logging: Epoch 3 Loss: 0.03
+Epoch 4 training...
+Logging: Epoch 4 Loss: 0.04
+Epoch 5 training...
+Logging: Epoch 5 Loss: 0.05
+```
+
+这里，`log_metrics` 是一个回调函数，它被 `Trainer` 调用，用于记录每个 epoch 的训练日志。
+
+---
+
+### **YOLOv8 中的回调函数**
+
+在 Ultralytics 的 YOLOv8 中，回调函数的作用类似于上述例子，只是更加复杂和灵活。以下是 YOLOv8 中的一些常见回调场景：
+
+1. **`on_train_start`**
+   - 在训练开始时触发。
+   - 可以用来初始化日志、设置超参数等。
+
+2. **`on_epoch_end`**
+   - 每个 epoch 结束时触发。
+   - 可以用来记录日志、检查模型效果、进行中间模型保存等。
+
+3. **`on_train_end`**
+   - 在训练结束时触发。
+   - 可以用来保存最终模型、生成报告等。
+
+#### Ultralytics 回调机制的简单示例：
+
+```python
+# 模拟 YOLOv8 的回调机制
+class YOLOv8Trainer:
+    def __init__(self):
+        self.callbacks = {
+            "on_train_start": [],
+            "on_epoch_end": [],
+            "on_train_end": []
+        }
+
+    def register_callback(self, event, callback):
+        """注册回调函数"""
+        if event in self.callbacks:
+            self.callbacks[event].append(callback)
+
+    def execute_callbacks(self, event, **kwargs):
+        """执行回调函数"""
+        for callback in self.callbacks[event]:
+            callback(**kwargs)
+
+    def train(self, epochs):
+        # 触发训练开始回调
+        self.execute_callbacks("on_train_start")
+        
+        for epoch in range(epochs):
+            print(f"Epoch {epoch + 1} training...")
+            # 模拟训练逻辑
+            
+            # 触发每个 epoch 结束的回调
+            self.execute_callbacks("on_epoch_end", epoch=epoch + 1, loss=0.01 * (epoch + 1))
+        
+        # 触发训练结束回调
+        self.execute_callbacks("on_train_end")
+
+# 定义一些回调函数
+def on_train_start():
+    print("Training started!")
+
+def on_epoch_end(epoch, loss):
+    print(f"Epoch {epoch} ended. Loss: {loss}")
+
+def on_train_end():
+    print("Training finished!")
+
+# 使用 YOLOv8Trainer 并注册回调函数
+trainer = YOLOv8Trainer()
+trainer.register_callback("on_train_start", on_train_start)
+trainer.register_callback("on_epoch_end", on_epoch_end)
+trainer.register_callback("on_train_end", on_train_end)
+
+trainer.train(epochs=3)
+```
+
+**输出：**
+```
+Training started!
+Epoch 1 training...
+Epoch 1 ended. Loss: 0.01
+Epoch 2 training...
+Epoch 2 ended. Loss: 0.02
+Epoch 3 training...
+Epoch 3 ended. Loss: 0.03
+Training finished!
+```
+
+---
+
+### **总结**
+
+1. **回调函数的作用**：
+   - 用于在特定事件发生时插入自定义逻辑。
+   - 提高代码的灵活性和扩展性。
+
+2. **YOLOv8 中的回调函数**：
+   - 用于在训练、验证、推理等过程中执行自定义操作。
+   - 用户可以通过注册回调函数来控制训练流程中的行为。
+
+3. **Python 实现**：
+   - 回调函数是函数式编程的一个常见特性，通常通过将函数作为参数传递来实现。
+
+希望这些解释能够帮助你更好地理解 YOLOv8 中回调函数的作用！如果有其他问题，欢迎继续提问。
+
+
+
+
+
+
+
+
+
+在Ultralytics YOLOv8项目中，回调函数（Callbacks）是**一种事件驱动机制**，用于在训练/推理的关键节点插入自定义逻辑，增强框架的扩展性。以下是其核心作用及实现机制：
+
+#### 回调函数的核心作用
+
+1. **生命周期钩子（Lifecycle Hooks）**  回调函数允许你在以下关键阶段注入代码：
+   
+   - 训练开始前（`on_train_start`）
+   - Epoch开始/结束时（`on_train_epoch_start/end`）
+   - 批次数据处理前后（`on_train_batch_start/end`）
+   - 验证阶段触发（`on_val_start/end`）
+   - 模型保存条件触发时（`on_model_save`）
+
+2. **解耦核心流程与定制逻辑**：通过将非核心功能（如日志记录、模型保存、可视化）剥离到回调中，保持训练循环代码的简洁性，例如：
+   
+   ```python
+   class CustomCallback(ultralytics.utils.callbacks.BaseCallback):
+       def on_train_epoch_end(self, trainer):
+           print(f"Epoch {trainer.epoch} 训练损失: {trainer.loss}")
+   ```
+
+---
+
+#### YOLOv8 内置的关键回调示例
+
+1. **模型保存回调（ModelCheckpoint）**  
+   - 触发条件：当验证指标（如mAP）达到阈值时保存模型
+   - 源码定位：`ultralytics/utils/callbacks/mlflow.py` 中的 `on_fit_epoch_end`
+
+2. **早停回调（EarlyStopping）**  
+   - 监控验证损失，若连续N个epoch未改善则终止训练
+   - 实现逻辑见 `ultralytics/engine/trainer.py` 中的 `_do_early_stop`
+
+3. **可视化回调（Visualization）**  
+   - 在验证阶段绘制预测框，可通过`on_val_end`触发图像生成
+   - 参考 `ultralytics/utils/plotting.py` 中的绘图函数
+
+---
+
+#### 回调的底层调度机制
+
+在 `Trainer` 类（`ultralytics/engine/trainer.py`）中，回调通过**事件循环**触发：
+```python
+# 简化后的伪代码
+class Trainer:
+    def __init__(self, callbacks):
+        self.callbacks = callbacks  # 回调实例列表
+
+    def train(self):
+        self.callback("on_train_start")
+        for epoch in epochs:
+            self.callback("on_train_epoch_start")
+            for batch in data:
+                self.callback("on_train_batch_start")
+                # 前向传播、反向传播...
+                self.callback("on_train_batch_end")
+            self.callback("on_train_epoch_end")
+```
+
+其中 `callback()` 方法会遍历所有注册的回调，并执行对应名称的方法。
+
+---
+
+#### 调试与自定义回调建议
+
+1. **查看内置回调源码**  
+   - 主要代码位于 `ultralytics/utils/callbacks/` 目录
+   - 例如 `mlflow.py`、`clearml.py` 展示了如何集成第三方工具
+
+2. **实现自定义回调**：继承 `BaseCallback` 并覆盖需要的事件方法：
+   
+   ```python
+   from ultralytics.utils.callbacks import BaseCallback
+   
+   class MyCallback(BaseCallback):
+       def on_train_start(self, trainer):
+           print("训练启动！超参数:", trainer.args)
+   ```
+
+3. **注册回调到训练器**：在训练时通过 `callbacks` 参数传入：
+   
+   ```python
+   from ultralytics import YOLO
+   
+   model = YOLO("yolov8n.yaml")
+   model.train(callbacks=[MyCallback()])
+   ```
+
+---
+
+通过回调机制，YOLOv8实现了高度模块化的设计。这种模式使得功能扩展无需修改核心训练代码，符合开放-封闭原则。理解回调流程是贡献代码或深度定制训练过程的关键步骤。
+
+### 2.2.2. difflib及其get_close_matches方法
+
+`difflib`是Python标准库中的一个模块，主要用于比较序列（如字符串、列表等）之间的差异。它提供了多种工具，用于生成差异、比较文本内容、查找相似项等。`difflib`在以下场景中非常有用：
+
+- 比较文本文件或字符串的差异。
+- 查找字符串或序列中的相似部分。
+- 实现拼写检查或自动补全功能。
+
+---
+
+`get_close_matches`是`difflib`模块中的一个函数，用于查找与目标字符串最接近的匹配项。它通常用于拼写检查、自动补全或查找相似的键值等场景。
+
+- **函数签名**：
+
+	```python
+	get_close_matches(
+	    word, 
+	    possibilities, 
+	    n=3, 
+	    cutoff=0.6
+	) -> list
+	```
+
+	- **`word`**：需要查找匹配项的目标字符串。
+
+	- **`possibilities`**：一个列表，包含所有可能的匹配项（如单词列表、键值列表等）。
+
+	- **`n`**（可选）：返回的匹配项数量，默认为3。如果找到的匹配项少于`n`个，则返回实际找到的匹配项。
+
+	- **`cutoff`**（可选）：匹配的相似度阈值，默认为0.6。该值的范围为0到1，其中1表示完全匹配，0表示完全不匹配。只有相似度大于或等于`cutoff`的匹配项才会被返回。
+
+- **返回值**：返回一个列表，包含与目标字符串最接近的匹配项，最多返回`n`个匹配项。
+
+- **工作原理**：`get_close_matches`使用一种基于序列匹配器（`SequenceMatcher`）的算法来计算目标字符串与每个候选匹配项之间的相似度。相似度是通过比较两个字符串的公共子序列来计算的，最终返回相似度最高的匹配项。
+
+- **使用示例**：
+
+	- **示例1**：
+
+		**拼写检查**：假设我们有一个单词列表，用户输入了一个可能拼写错误的单词，我们希望找到最接近的正确拼写。
+
+		```python
+		import numpy as np
+		import difflib
+		
+		word_list = ["apple", "banana", "cherry", "date", "grape"]
+		user_input = "aple"
+		
+		for threashold in np.arange(0, 1, 0.1):
+		    matches = difflib.get_close_matches(
+		        word=user_input,
+		        possibilities=word_list,
+		        n=3,
+		        cutoff=threashold
+		    )
+		
+		    print(f"[Threashold={threashold:.1f}] {matches = }")
+		```
+
+		```
+		[Threashold=0.0] matches = ['apple', 'grape', 'date']
+		[Threashold=0.1] matches = ['apple', 'grape', 'date']
+		[Threashold=0.2] matches = ['apple', 'grape', 'date']
+		[Threashold=0.3] matches = ['apple', 'grape', 'date']
+		[Threashold=0.4] matches = ['apple', 'grape', 'date']
+		[Threashold=0.5] matches = ['apple', 'grape', 'date']
+		[Threashold=0.6] matches = ['apple', 'grape']
+		[Threashold=0.7] matches = ['apple']
+		[Threashold=0.8] matches = ['apple']
+		[Threashold=0.9] matches = []
+		```
+
+		> ⚠️如果`cutoff`调整为0.0，那么也不是直接返回["apple", "banana", "cherry"]，这是因为`difflib.get_close_matches()`方法**是先计算所有proposal的相似度→再根据相似排序→再经过阈值**，所以即便`cutoff=0.0`，也是会找到最相近的返回的。
+
+	- **示例2：**
+
+		**查找相似的键**：在配置字典中，用户可能输入了错误的键名，我们希望找到最接近的正确键名。
+
+		```python
+		import difflib
+		
+		config_keys = ["learning_rate", "batch_size", "epochs", "optimizer"]
+		user_key = "learing_rate"  # ⚠️这里少写了一个字母n
+		
+		matches = difflib.get_close_matches(user_key, config_keys)
+		print(matches)  # 输出：['learning_rate']
+		```
+
+	- **示例**3：
+
+		**调整参数**：我们可以调整`n`和`cutoff`参数来控制返回的匹配项数量和相似度阈值。
+
+		```python
+		import difflib
+		
+		word_list = ["apple", "banana", "cherry", "date", "grape"]
+		user_input = "aple"
+		
+		# 返回最多5个匹配项，相似度阈值为0.5
+		matches = difflib.get_close_matches(user_input, word_list, n=5, cutoff=0.5)
+		print(matches)  # 输出：['apple', 'banana', 'cherry', 'date', 'grape']
+		```
+
+- **应用场景**：
+
+	- **拼写检查**：在文本编辑器或搜索引擎中，为用户提供拼写建议。
+
+	- **自动补全**：在代码编辑器或命令行工具中，根据用户输入提供可能的补全选项。
+
+	- **配置文件检查**：在软件开发中，帮助用户纠正配置文件中的拼写错误。
+
+	- **数据清洗**：在数据处理中，找出并修正数据中的拼写错误或不一致的字段名称。
+
+- **总结**：`difflib.get_close_matches`是一个非常实用的工具，能够帮助开发者和用户快速定位和纠正拼写错误或查找相似项。
+
+### 2.2.3. os.access()
 
 `os.access()` 是 Python 标准库 `os` 模块中的一个方法，用于检查调用进程是否可以访问指定路径的文件或目录。这个方法提供了多种访问模式，可以用来检查文件是否存在、是否可读、可写或可执行。
 
@@ -924,7 +1528,7 @@ CUDA_VISIBLE_DEVICES=0,1 python temp.py
 	- **预处理**：在执行复杂操作之前，先检查文件的访问权限，确保操作可以顺利进行。
 
 
-### 2.2.2. psutil.virtual_memory()
+### 2.2.4. psutil.virtual_memory()
 
 `psutil.virtual_memory()` 方法用于获取系统内存的使用情况。它返回一个命名元组（`svmem`），其中包含多个属性，每个属性都提供了关于系统内存状态的不同信息。以下是 `psutil.virtual_memory()` 方法返回的各个属性的详细说明：
 
@@ -1038,7 +1642,7 @@ slab内存: 19.05 GB
 > 	- **缓存内存**：用于存储最近访问过的文件和目录信息，提高文件系统访问速度。
 >
 
-### 2.2.3. shutil.disk_usage()
+### 2.2.5. shutil.disk_usage()
 
 `shutil.disk_usage()` 方法是 Python 标准库 `shutil` 模块中的一个方法，用于获取给定路径的磁盘使用情况统计信息。此方法返回一个命名元组，包含三个属性：`total`、`used` 和 `free`，分别表示总空间、已使用空间和可用空间，单位为字节。
 
@@ -1091,7 +1695,7 @@ print(f"使用百分比: {stat.used / stat.total * 100:.2f}%")
 使用百分比: 33.10%
 ```
 
-### 2.2.4. .pop()方法
+### 2.2.6. .pop()方法
 
 `.pop()` 方法是Python中一个常用方法，用于移除一个元素，并返回该元素的值。
 
@@ -1104,7 +1708,7 @@ print(f"使用百分比: {stat.used / stat.total * 100:.2f}%")
 | 有序字典（OrderedDict） | `OrderedDict.pop(key, default)` | 被移除键对应的值 | 如果键不存在且未提供默认值，引发 `KeyError` | 保持插入顺序，可以提供默认值避免异常                         |
 | 默认字典（defaultdict） | `defaultdict.pop(key, default)` | 被移除键对应的值 | 如果键不存在且未提供默认值，引发 `KeyError` | 自动创建默认值，可以提供默认值避免异常                       |
 
-### 2.2.5. ThreadPool（imap）
+### 2.2.7. ThreadPool（imap）
 
 `from multiprocessing.pool import ThreadPool` 这行代码的作用是从`multiprocessing.pool`模块中导入`ThreadPool`类。这个类是用于创建一个线程池，它提供了一种方便的方式来并发地执行多个任务。以下是关于`ThreadPool`类的详细解释：
 
@@ -1112,11 +1716,11 @@ print(f"使用百分比: {stat.used / stat.total * 100:.2f}%")
 >
 > 🥳 𝑨𝒏𝒔𝒘𝒆𝒓：确实，`multiprocessing`模块主要用于多进程编程，但它也提供了线程池的功能，这主要是为了提供一个统一的接口和更灵活的并发编程选择。`multiprocessing`模块的设计目标之一是提供一个统一的接口来处理并发编程，无论是多进程还是多线程。`ProcessPoolExecutor`和`ThreadPool`都继承自`concurrent.futures.Executor`类，这意味着它们有相似的API，可以方便地在多进程和多线程之间切换。
 
-#### 2.2.5.1. 线程池的作用
+#### 2.2.7.1. 线程池的作用
 
 线程池的主要目的是减少线程创建和销毁的开销，提高程序的性能。当程序需要执行多个并发任务时，每次创建和销毁线程都会消耗系统资源。线程池预先创建了一组线程，这些线程可以被重复使用来执行任务。当一个任务完成时，线程不会被销毁，而是返回到线程池中，等待下一个任务。
 
-#### 2.2.5.2. `ThreadPool`类的主要方法
+#### 2.2.7.2. `ThreadPool`类的主要方法
 
 1. **`__init__(self, processes=None, initializer=None, initargs=())`**
    - **`processes`**：指定线程池中的线程数量。如果为`None`，则默认值为`os.cpu_count()`，即CPU核心数。这是因为线程池通常用于I/O密集型任务，而不是CPU密集型任务，所以线程数量通常可以设置得比CPU核心数多。
@@ -1147,7 +1751,7 @@ print(f"使用百分比: {stat.used / stat.total * 100:.2f}%")
 8. **`join()`**
    - 等待所有任务完成。这个方法必须在`close()`方法调用后使用。
 
-#### 2.2.5.3. 示例
+#### 2.2.7.3. 示例
 
 以下是一个使用`ThreadPool`类的示例，展示了如何创建线程池、提交任务、获取结果并关闭线程池：
 
@@ -1177,11 +1781,11 @@ if __name__ == "__main__":
     # 线程池在with块结束时自动关闭
 ```
 
-#### 2.2.5.4. 总结
+#### 2.2.7.4. 总结
 
 `ThreadPool`类提供了一种方便的方式来并发地执行多个任务，适用于I/O密集型任务。通过预先创建一组线程，可以减少线程创建和销毁的开销，提高程序的性能。
 
-### 2.2.6. monkey patches
+### 2.2.8. monkey patches
 
 猴子补丁（Monkey Patching）是一种在运行时动态修改代码的技术，通常用于添加功能或修复缺陷。它允许开发者在不修改源代码的情况下，通过替换或修改模块、类、函数或对象的属性来改变程序的行为。猴子补丁通常用于以下场景：
 
@@ -1206,11 +1810,11 @@ if WINDOWS:
 
 
 
-### 2.2.7. warnings.filterwarnings()
+### 2.2.9. warnings.filterwarnings()
 
 `warnings.filterwarnings()` 是 Python 标准库 `warnings` 模块中的一个函数，用于控制哪些类别的警告应该被显示，哪些应该被忽略。这个函数允许开发者在运行时动态地控制警告信息的过滤，而不是在代码中静态地定义。
 
-### 2.2.8. 函数原型
+### 2.2.10. 函数原型
 
 ```python
 warnings.filterwarnings(
@@ -1223,7 +1827,7 @@ warnings.filterwarnings(
 )
 ```
 
-### 2.2.9. 参数说明
+### 2.2.11. 参数说明
 
 - `action`：指定如何处理警告。常用的值包括：
   - `'ignore'`：忽略警告，不显示也不记录。
@@ -1248,7 +1852,7 @@ warnings.filterwarnings(
 - `lineno`：指定行号的整数。如果提供了此参数，只有当警告来自指定行号时，`action` 才会被应用。
 - `append`：布尔值，指定是否将过滤规则追加到当前的警告过滤列表中。默认为 `False`，即替换当前的过滤规则。
 
-### 2.2.10. 使用示例
+### 2.2.12. 使用示例
 
 ```python
 import warnings
@@ -1265,7 +1869,7 @@ warnings.filterwarnings('once', category=RuntimeWarning, module='mymodule')
 
 使用 `warnings.filterwarnings()` 可以帮助开发者在开发过程中管理警告信息，避免被过多的警告干扰，同时也能够在需要时捕捉到重要的警告信息。
 
-### 2.2.11. \# noqa
+### 2.2.13. \# noqa
 
 在Python代码中，`# noqa` 是一个注释标记，用于告诉代码静态分析工具或者linter（例如Pylint、Flake8等）忽略当前行或特定行的警告或错误。这个标记通常用在代码中那些故意违反了某些编码规则，但又不希望因此产生linter警告的地方。
 
@@ -1285,7 +1889,7 @@ some_variable = 10  # noqa: F401
 
 使用`# noqa`是一种快速抑制警告的方法，但它应该谨慎使用，因为它可能会掩盖潜在的问题。最佳实践是尽量修正代码以符合linter的规则，而不是简单地忽略警告。
 
-### 2.2.12. def \_\_setitem\_\_()
+### 2.2.14. def \_\_setitem\_\_()
 
 `__setitem__` 方法是 Python 中的一个特殊方法（也称为魔术方法），它被用来实现对象的项赋值功能。当我们使用类似 `obj[1] = xxx` 这样的语法对对象的某个项进行赋值时，实际上会调用该对象的 `__setitem__` 方法。
 
@@ -1311,17 +1915,17 @@ print(my_list.data)  # 输出: ['Hello']
 
 在这个例子中，`MyList` 类有一个 `data` 属性，它是一个普通的 Python 列表。`__setitem__` 方法被定义为将值赋给 `data` 列表在 `index` 索引处的位置。当我们对 `my_list` 实例使用 `my_list[0] = 'Hello'` 这样的赋值语句时，实际上是在调用 `MyList` 类的 `__setitem__` 方法。
 
-### 2.2.13. random.choice(seq)
+### 2.2.15. random.choice(seq)
 
 `random.choice()` 方法是 Python 标准库中 `random` 模块提供的一个函数，它用于从给定的序列（如列表、元组等）中随机选择一个元素并返回。
 
-### 2.2.14. random.uniform(a, b)
+### 2.2.16. random.uniform(a, b)
 
 `random.uniform(a, b)` 函数是 Python 中 random 模块提供的一个函数，它用于生成一个指定范围内的随机浮点数。
 
 > 🔔范围是闭区间，包含`a`和`b`
 
-### 2.2.15. os.cpu_count()
+### 2.2.17. os.cpu_count()
 
 `os.cpu_count()` 是 Python 标准库 `os` 模块中的一个函数，用于返回当前机器上可用的 CPU 核心数。这个函数返回的值包括物理核心和逻辑核心（如果操作系统支持超线程技术，如 Intel 的 Hyper-Threading）。逻辑核心是现代多核处理器上的一个特性，它们允许单个物理核心同时处理多个线程。
 
@@ -1369,7 +1973,7 @@ L3 缓存:	33.0 MB
 os.cpu_count() = 28
 ```
 
-### 2.2.16. yield
+### 2.2.18. yield
 
 在编程中，`yield` 是一个关键字，它用于定义一个生成器（generator）函数。生成器是一种特殊类型的迭代器，它允许我们逐个产生值，而不是一次性计算并返回所有值。这使得生成器在处理大量数据时非常有用，因为它们可以帮助节省内存。
 
@@ -1440,7 +2044,7 @@ Countdown complete
 
 每次迭代都会打印当前的倒数值，直到倒数结束，然后打印 "Countdown complete"。这个生成器函数可以用于任何需要逐个处理序列值的场景，例如文件逐行读取、数据处理流水线等。
 
-### 2.2.17. \_\_name\_\_
+### 2.2.19. \_\_name\_\_
 
 在Python中，`.__name__` 是一个特殊的属性，用于获取一个模块、类、函数或方法的名称。这个属性是内置的，不需要我们手动设置。
 
