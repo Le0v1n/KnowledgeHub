@@ -34,7 +34,39 @@ and the repository exists.
 
 如果我们不强制需要使用 SSH，可以将远程仓库 URL 改为 HTTPS 协议。HTTPS 协议支持通过我们已配置的代理正常工作。操作步骤如下：
 
-## 3.1. 查看git连接远程仓库的方式
+## 3.1. 为Linux终端添加代理
+
+```bash
+vim ~/.bashrc
+```
+
+在文件末尾追加内容：
+
+```
+# Proxy
+export HTTP_PROXY=http://127.0.0.1:7890
+export HTTPS_PROXY=http://127.0.0.1:7890
+```
+
+> ⚠️Clash默认的代理端口为7890，如果你的不是请修改为正确的端口名
+
+之后更新：
+
+```bash
+source ~/.bashrc
+```
+
+测试是否成功：
+
+```bash
+curl www.google.com
+```
+
+如果返回一堆东西，说明终端已经可以使用代理了。
+
+> ⚠️ ping命令是不走代理的，所以不要用ping命令去测试，没有意义。具体说明：[windows终端命令行下如何使用代理？ #1489](https://github.com/shadowsocks/shadowsocks-windows/issues/1489)
+
+## 3.2. 查看git连接远程仓库的方式
 
 ```bash
 # 查看当前远程仓库 URL：
@@ -46,7 +78,7 @@ origin  git@github.com:userName/repoName.git (fetch)
 origin  git@github.com:userName/repoName.git (push)
 ```
 
-## 3.1. 从SSH协议切换为HTTPS协议
+## 3.3. 从SSH协议切换为HTTPS协议
 
 如果远程仓库 URL 是类似 `git@github.com:username/repo.git`，说明使用的是 SSH 协议。我们需要修改为 HTTPS 协议（假设我们的仓库地址为 `https://github.com/username/repo.git`）：
 
@@ -60,11 +92,11 @@ git remote set-url origin https://github.com/username/repo.git
 git push
 ```
 
-此时应该会提示输入账号和密码，那我们可以<kbd>Ctrl + C</kbd>打断了，因为我们原始的命令是不会生效的。
+此时应该会提示输入账号和密码，那我们可以<kbd>Ctrl + C</kbd>打断了，因为我们原始的密码无法正常登录的。
 
-## 使用 GitHub Personal Access Token (PAT) 登录
+## 3.4. 使用 GitHub Personal Access Token (PAT) 登录
 
-### 1. 创建 Personal Access Token
+### 3.4.1. 创建 Personal Access Token
 
 1. 登录到我们的 GitHub 账户：[https://github.com/login](https://github.com/login)
 2. 点击右上角头像，选择 **Settings**（设置）。
@@ -82,7 +114,7 @@ git push
 
 > 💡不保存也可以的，如果还需要用我们再次生成也可以（但会导致之前的失效）
 
-### 2. 配置 Git 使用 PAT
+### 3.4.2. 配置 Git 使用 PAT
 
 当我们使用 HTTPS 推送代码时，需要用 Personal Access Token 替代密码。
 
@@ -92,12 +124,12 @@ git push
 
 如果推送成功，则配置完成。
 
----
+### 3.4.3. 保存 PAT（可选）
 
-### 3. 保存 PAT（可选）
 为了避免每次推送都需要手动输入 PAT，我们可以将其保存到 Git 的凭据管理器中。
 
-#### 方法 1：通过 Git 自带的凭据管理器保存
+#### 3.4.3.1. 方法 1：通过 Git 自带的凭据管理器保存
+
 运行以下命令启用凭据缓存：
 ```bash
 git config --global credential.helper store
@@ -105,14 +137,17 @@ git config --global credential.helper store
 
 然后再次运行 `git push`，输入用户名和 PAT 后，Git 会将凭据保存到本地。在下一次推送时，不会再次提示输入。
 
-#### 方法 2：手动编辑 `.gitconfig`
+#### 3.4.3.2. 方法 2：手动编辑 `.gitconfig`
+
 编辑我们的全局 Git 配置文件：
+
 ```bash
-nano ~/.gitconfig
+vim ~/.gitconfig
 ```
 
 添加以下内容（将 `USERNAME` 替换为我们的 GitHub 用户名，将 `TOKEN` 替换为我们的 Personal Access Token）：
-```plaintext
+
+```
 [credential "https://github.com"]
     username = USERNAME
     helper = store
@@ -120,55 +155,11 @@ nano ~/.gitconfig
 
 保存后，Git 会自动使用保存的用户名和 PAT。
 
----
+# 4. 其他方法
 
-### 4. 验证配置
-尝试运行以下命令：
-```bash
-git push
-```
+> ⚠️<font color='red'><b>推荐使用上面的方法，已经亲自测试过，没有什么问题</b></font>。
 
-如果成功推送，则说明配置完成。
-
----
-
-## 替代方案：切换回 SSH 协议
-如果我们不想使用 HTTPS 和 Personal Access Token，也可以切换回 SSH 协议（并确保 SSH 配置正常）。
-
-1. 确保我们已经生成 SSH 密钥：
-   ```bash
-   ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
-   ```
-
-2. 将公钥添加到 GitHub：
-   - 打开 [GitHub SSH 设置页面](https://github.com/settings/keys)。
-   - 点击 **New SSH Key**，将生成的公钥内容（通常在 `~/.ssh/id_rsa.pub` 中）复制粘贴到 GitHub。
-
-3. 测试 SSH 是否连接成功：
-   ```bash
-   ssh -T git@github.com
-   ```
-
-4. 切换远程仓库 URL 回 SSH：
-   ```bash
-   git remote set-url origin git@github.com:Le0v1n/KnowledgeHub.git
-   ```
-
-5. 再次推送代码：
-   ```bash
-   git push
-   ```
-
----
-
-## 总结
-- **推荐使用 HTTPS + Personal Access Token**：简单且安全。
-- 如果我们更熟悉 SSH，可以切换回 SSH 协议并正确配置 SSH 密钥。
-- 一旦配置完成，我们的推送/拉取操作将无需重复输入用户名和密码。
-
-如果还有其他问题，欢迎随时提问！ 😊
-
-## 3.2. 方法2：配置 SSH 通过代理
+## 4.1. 方法2：配置 SSH 通过代理
 
 如果我们必须使用 SSH 协议，可以配置 SSH 通过代理连接。
 
@@ -197,7 +188,7 @@ git push
 - `nc` 需要提前安装，如果未安装可以参考相关教程。
 
 
-## 3.3. 方法3：检查网络环境
+## 4.2. 方法3：检查网络环境
 
 如果上述方法仍然无效，可能我们的网络环境存在更深层次的问题（如防火墙限制或 Clash 配置问题）。可以尝试以下操作：
 - 确认 Clash 的代理是否正常工作：
@@ -208,7 +199,7 @@ git push
 - 确保 Clash 的规则允许 GitHub 的 SSH 或 HTTPS 流量通过。
 - 检查是否有其他网络限制（如公司网络屏蔽端口）。
 
-## 3.4. 方法4：使用 GitHub CLI 登录并推送
+## 4.3. 方法4：使用 GitHub CLI 登录并推送
 
 如果 HTTPS 和 SSH 都无法解决问题，可以使用 [GitHub CLI](https://cli.github.com/) 进行身份验证和推送。
 1. 安装 GitHub CLI。
@@ -219,7 +210,7 @@ git push
 3. 选择 HTTPS 协议并登录。
 4. 再次尝试推送代码。
 
-## 3.5. 方法5：使用其他端口（非 22 端口的 SSH）
+## 4.4. 方法5：使用其他端口（非 22 端口的 SSH）
 
 GitHub 提供了一个备用的 SSH 端口（443），可以尝试使用该端口：
 
@@ -237,7 +228,7 @@ GitHub 提供了一个备用的 SSH 端口（443），可以尝试使用该端�
     ```
 - 保存后重试 `git push`。
 
-# 4. 总结
+# 5. 总结
 - **推荐优先方案**：切换到 HTTPS 协议，简单且无需额外配置。
 - 如果必须使用 SSH，配置 SSH 的代理或切换到 GitHub 的备用端口（443）。
 - 确保 Clash 的代理规则和网络环境无额外限制。
