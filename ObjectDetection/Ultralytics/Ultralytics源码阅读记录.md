@@ -196,8 +196,6 @@ if RANK in {-1, 0}:
     )
 ```
 
-
-
 ## 1.3. 读取数据（图片-标签对）
 
 使用多线程来读取图片，使用的是线程池的`imap函数`，该函数会调用`verify_image_label`函数对图片进行检查。
@@ -916,7 +914,7 @@ CUDA_VISIBLE_DEVICES=0,1 python temp.py
 
 ## 2.2. 🌟Python
 
-### defaultdict
+### 2.2.1. defaultdict
 
 `defaultdict` 是 Python 标准库 `collections` 模块中的一个类，它是 `dict` 的子类，用于提供一个默认值的字典。当访问一个不存在的键时，`defaultdict` 会自动为该键生成一个默认值，而不是抛出 `KeyError` 异常。
 
@@ -1058,13 +1056,13 @@ defaultdict(default_factory)
 
 7. **总结**：`defaultdict` 是一个非常实用的工具，特别适合在需要处理默认值或动态生成键值对的场景中使用。它能够简化代码逻辑，减少错误，并提高代码的可读性和可维护性。
 
-### 2.2.1. 回调函数
+### 2.2.2. 回调函数
 
-#### 什么是回调函数？
+#### 2.2.2.1. 什么是回调函数？
 
 **回调函数**是一种在程序执行期间被“回调”（调用）的函数。它通常作为参数传递给另一个函数或类，然后在特定的时机由后者调用。回调函数的主要目的是让用户能够在特定事件发生时执行自定义的逻辑。
 
-#### 回调函数的作用
+#### 2.2.2.2. 回调函数的作用
 
 在 Ultralytics 的 YOLOv8 中，回调函数的作用是**在训练、验证、推理等过程中插入自定义逻辑**。例如：
 - 在每个 epoch 开始或结束时执行某些操作（如记录日志、保存模型）。
@@ -1073,16 +1071,16 @@ defaultdict(default_factory)
 
 这种机制让框架变得高度可扩展，允许用户根据自己的需求插入自定义行为，而无需修改核心代码。
 
-#### 现实生活中的类比
+#### 2.2.2.3. 现实生活中的类比
 
 回调函数可以类比为“闹钟提醒”或“事件通知”。
 
-##### 例子 1：闹钟提醒
+##### 2.2.2.3.1. 例子 1：闹钟提醒
 
 - 你设置了一个闹钟（回调函数），告诉闹钟在早上 7 点响（事件发生）。
 - 到了早上 7 点，闹钟会响起，提醒你起床（回调函数被触发）。
 
-##### 例子 2：送外卖
+##### 2.2.2.3.2. 例子 2：送外卖
 
 - 你向外卖平台下单，告诉骑手“送到家门口后给我打电话”（回调函数）。
 - 骑手送到后打电话通知你（事件触发，回调被调用）。
@@ -1091,9 +1089,9 @@ defaultdict(default_factory)
 
 ---
 
-#### Python 中的回调函数例子
+#### 2.2.2.4. Python 中的回调函数例子
 
-##### 1. 基础回调函数
+##### 2.2.2.4.1. 基础回调函数
 
 以下是一个简单的例子，演示如何使用回调函数实现自定义逻辑：
 
@@ -1123,7 +1121,7 @@ Callback triggered! Result is: 15
 
 ---
 
-#### **2. 现实应用：训练过程中的回调**
+#### 2.2.2.5. **2. 现实应用：训练过程中的回调**
 
 在深度学习中，回调函数通常用来记录日志、保存模型、或者调整学习率。例如：
 
@@ -1173,7 +1171,7 @@ Logging: Epoch 5 Loss: 0.05
 
 ---
 
-### **YOLOv8 中的回调函数**
+### 2.2.3. **YOLOv8 中的回调函数**
 
 在 Ultralytics 的 YOLOv8 中，回调函数的作用类似于上述例子，只是更加复杂和灵活。以下是 YOLOv8 中的一些常见回调场景：
 
@@ -1189,7 +1187,7 @@ Logging: Epoch 5 Loss: 0.05
    - 在训练结束时触发。
    - 可以用来保存最终模型、生成报告等。
 
-#### Ultralytics 回调机制的简单示例：
+#### 2.2.3.1. Ultralytics 回调机制的简单示例：
 
 ```python
 # 模拟 YOLOv8 的回调机制
@@ -1258,7 +1256,7 @@ Training finished!
 
 ---
 
-### **总结**
+### 2.2.4. **总结**
 
 1. **回调函数的作用**：
    - 用于在特定事件发生时插入自定义逻辑。
@@ -1271,108 +1269,7 @@ Training finished!
 3. **Python 实现**：
    - 回调函数是函数式编程的一个常见特性，通常通过将函数作为参数传递来实现。
 
-希望这些解释能够帮助你更好地理解 YOLOv8 中回调函数的作用！如果有其他问题，欢迎继续提问。
-
-
-
-
-
-
-
-
-
-在Ultralytics YOLOv8项目中，回调函数（Callbacks）是**一种事件驱动机制**，用于在训练/推理的关键节点插入自定义逻辑，增强框架的扩展性。以下是其核心作用及实现机制：
-
-#### 回调函数的核心作用
-
-1. **生命周期钩子（Lifecycle Hooks）**  回调函数允许你在以下关键阶段注入代码：
-   
-   - 训练开始前（`on_train_start`）
-   - Epoch开始/结束时（`on_train_epoch_start/end`）
-   - 批次数据处理前后（`on_train_batch_start/end`）
-   - 验证阶段触发（`on_val_start/end`）
-   - 模型保存条件触发时（`on_model_save`）
-
-2. **解耦核心流程与定制逻辑**：通过将非核心功能（如日志记录、模型保存、可视化）剥离到回调中，保持训练循环代码的简洁性，例如：
-   
-   ```python
-   class CustomCallback(ultralytics.utils.callbacks.BaseCallback):
-       def on_train_epoch_end(self, trainer):
-           print(f"Epoch {trainer.epoch} 训练损失: {trainer.loss}")
-   ```
-
----
-
-#### YOLOv8 内置的关键回调示例
-
-1. **模型保存回调（ModelCheckpoint）**  
-   - 触发条件：当验证指标（如mAP）达到阈值时保存模型
-   - 源码定位：`ultralytics/utils/callbacks/mlflow.py` 中的 `on_fit_epoch_end`
-
-2. **早停回调（EarlyStopping）**  
-   - 监控验证损失，若连续N个epoch未改善则终止训练
-   - 实现逻辑见 `ultralytics/engine/trainer.py` 中的 `_do_early_stop`
-
-3. **可视化回调（Visualization）**  
-   - 在验证阶段绘制预测框，可通过`on_val_end`触发图像生成
-   - 参考 `ultralytics/utils/plotting.py` 中的绘图函数
-
----
-
-#### 回调的底层调度机制
-
-在 `Trainer` 类（`ultralytics/engine/trainer.py`）中，回调通过**事件循环**触发：
-```python
-# 简化后的伪代码
-class Trainer:
-    def __init__(self, callbacks):
-        self.callbacks = callbacks  # 回调实例列表
-
-    def train(self):
-        self.callback("on_train_start")
-        for epoch in epochs:
-            self.callback("on_train_epoch_start")
-            for batch in data:
-                self.callback("on_train_batch_start")
-                # 前向传播、反向传播...
-                self.callback("on_train_batch_end")
-            self.callback("on_train_epoch_end")
-```
-
-其中 `callback()` 方法会遍历所有注册的回调，并执行对应名称的方法。
-
----
-
-#### 调试与自定义回调建议
-
-1. **查看内置回调源码**  
-   - 主要代码位于 `ultralytics/utils/callbacks/` 目录
-   - 例如 `mlflow.py`、`clearml.py` 展示了如何集成第三方工具
-
-2. **实现自定义回调**：继承 `BaseCallback` 并覆盖需要的事件方法：
-   
-   ```python
-   from ultralytics.utils.callbacks import BaseCallback
-   
-   class MyCallback(BaseCallback):
-       def on_train_start(self, trainer):
-           print("训练启动！超参数:", trainer.args)
-   ```
-
-3. **注册回调到训练器**：在训练时通过 `callbacks` 参数传入：
-   
-   ```python
-   from ultralytics import YOLO
-   
-   model = YOLO("yolov8n.yaml")
-   model.train(callbacks=[MyCallback()])
-   ```
-
----
-
-通过回调机制，YOLOv8实现了高度模块化的设计。这种模式使得功能扩展无需修改核心训练代码，符合开放-封闭原则。理解回调流程是贡献代码或深度定制训练过程的关键步骤。
-
-### 2.2.2. difflib及其get_close_matches方法
+### 2.2.5. difflib及其get_close_matches方法
 
 `difflib`是Python标准库中的一个模块，主要用于比较序列（如字符串、列表等）之间的差异。它提供了多种工具，用于生成差异、比较文本内容、查找相似项等。`difflib`在以下场景中非常有用：
 
@@ -1487,7 +1384,7 @@ class Trainer:
 
 - **总结**：`difflib.get_close_matches`是一个非常实用的工具，能够帮助开发者和用户快速定位和纠正拼写错误或查找相似项。
 
-### 2.2.3. os.access()
+### 2.2.6. os.access()
 
 `os.access()` 是 Python 标准库 `os` 模块中的一个方法，用于检查调用进程是否可以访问指定路径的文件或目录。这个方法提供了多种访问模式，可以用来检查文件是否存在、是否可读、可写或可执行。
 
@@ -1528,7 +1425,7 @@ class Trainer:
 	- **预处理**：在执行复杂操作之前，先检查文件的访问权限，确保操作可以顺利进行。
 
 
-### 2.2.4. psutil.virtual_memory()
+### 2.2.7. psutil.virtual_memory()
 
 `psutil.virtual_memory()` 方法用于获取系统内存的使用情况。它返回一个命名元组（`svmem`），其中包含多个属性，每个属性都提供了关于系统内存状态的不同信息。以下是 `psutil.virtual_memory()` 方法返回的各个属性的详细说明：
 
@@ -1642,7 +1539,7 @@ slab内存: 19.05 GB
 > 	- **缓存内存**：用于存储最近访问过的文件和目录信息，提高文件系统访问速度。
 >
 
-### 2.2.5. shutil.disk_usage()
+### 2.2.8. shutil.disk_usage()
 
 `shutil.disk_usage()` 方法是 Python 标准库 `shutil` 模块中的一个方法，用于获取给定路径的磁盘使用情况统计信息。此方法返回一个命名元组，包含三个属性：`total`、`used` 和 `free`，分别表示总空间、已使用空间和可用空间，单位为字节。
 
@@ -1695,7 +1592,7 @@ print(f"使用百分比: {stat.used / stat.total * 100:.2f}%")
 使用百分比: 33.10%
 ```
 
-### 2.2.6. .pop()方法
+### 2.2.9. .pop()方法
 
 `.pop()` 方法是Python中一个常用方法，用于移除一个元素，并返回该元素的值。
 
@@ -1708,7 +1605,7 @@ print(f"使用百分比: {stat.used / stat.total * 100:.2f}%")
 | 有序字典（OrderedDict） | `OrderedDict.pop(key, default)` | 被移除键对应的值 | 如果键不存在且未提供默认值，引发 `KeyError` | 保持插入顺序，可以提供默认值避免异常                         |
 | 默认字典（defaultdict） | `defaultdict.pop(key, default)` | 被移除键对应的值 | 如果键不存在且未提供默认值，引发 `KeyError` | 自动创建默认值，可以提供默认值避免异常                       |
 
-### 2.2.7. ThreadPool（imap）
+### 2.2.10. ThreadPool（imap）
 
 `from multiprocessing.pool import ThreadPool` 这行代码的作用是从`multiprocessing.pool`模块中导入`ThreadPool`类。这个类是用于创建一个线程池，它提供了一种方便的方式来并发地执行多个任务。以下是关于`ThreadPool`类的详细解释：
 
@@ -1716,11 +1613,11 @@ print(f"使用百分比: {stat.used / stat.total * 100:.2f}%")
 >
 > 🥳 𝑨𝒏𝒔𝒘𝒆𝒓：确实，`multiprocessing`模块主要用于多进程编程，但它也提供了线程池的功能，这主要是为了提供一个统一的接口和更灵活的并发编程选择。`multiprocessing`模块的设计目标之一是提供一个统一的接口来处理并发编程，无论是多进程还是多线程。`ProcessPoolExecutor`和`ThreadPool`都继承自`concurrent.futures.Executor`类，这意味着它们有相似的API，可以方便地在多进程和多线程之间切换。
 
-#### 2.2.7.1. 线程池的作用
+#### 2.2.10.1. 线程池的作用
 
 线程池的主要目的是减少线程创建和销毁的开销，提高程序的性能。当程序需要执行多个并发任务时，每次创建和销毁线程都会消耗系统资源。线程池预先创建了一组线程，这些线程可以被重复使用来执行任务。当一个任务完成时，线程不会被销毁，而是返回到线程池中，等待下一个任务。
 
-#### 2.2.7.2. `ThreadPool`类的主要方法
+#### 2.2.10.2. `ThreadPool`类的主要方法
 
 1. **`__init__(self, processes=None, initializer=None, initargs=())`**
    - **`processes`**：指定线程池中的线程数量。如果为`None`，则默认值为`os.cpu_count()`，即CPU核心数。这是因为线程池通常用于I/O密集型任务，而不是CPU密集型任务，所以线程数量通常可以设置得比CPU核心数多。
@@ -1751,7 +1648,7 @@ print(f"使用百分比: {stat.used / stat.total * 100:.2f}%")
 8. **`join()`**
    - 等待所有任务完成。这个方法必须在`close()`方法调用后使用。
 
-#### 2.2.7.3. 示例
+#### 2.2.10.3. 示例
 
 以下是一个使用`ThreadPool`类的示例，展示了如何创建线程池、提交任务、获取结果并关闭线程池：
 
@@ -1781,11 +1678,11 @@ if __name__ == "__main__":
     # 线程池在with块结束时自动关闭
 ```
 
-#### 2.2.7.4. 总结
+#### 2.2.10.4. 总结
 
 `ThreadPool`类提供了一种方便的方式来并发地执行多个任务，适用于I/O密集型任务。通过预先创建一组线程，可以减少线程创建和销毁的开销，提高程序的性能。
 
-### 2.2.8. monkey patches
+### 2.2.11. monkey patches
 
 猴子补丁（Monkey Patching）是一种在运行时动态修改代码的技术，通常用于添加功能或修复缺陷。它允许开发者在不修改源代码的情况下，通过替换或修改模块、类、函数或对象的属性来改变程序的行为。猴子补丁通常用于以下场景：
 
@@ -1810,11 +1707,11 @@ if WINDOWS:
 
 
 
-### 2.2.9. warnings.filterwarnings()
+### 2.2.12. warnings.filterwarnings()
 
 `warnings.filterwarnings()` 是 Python 标准库 `warnings` 模块中的一个函数，用于控制哪些类别的警告应该被显示，哪些应该被忽略。这个函数允许开发者在运行时动态地控制警告信息的过滤，而不是在代码中静态地定义。
 
-### 2.2.10. 函数原型
+### 2.2.13. 函数原型
 
 ```python
 warnings.filterwarnings(
@@ -1827,7 +1724,7 @@ warnings.filterwarnings(
 )
 ```
 
-### 2.2.11. 参数说明
+### 2.2.14. 参数说明
 
 - `action`：指定如何处理警告。常用的值包括：
   - `'ignore'`：忽略警告，不显示也不记录。
@@ -1852,7 +1749,7 @@ warnings.filterwarnings(
 - `lineno`：指定行号的整数。如果提供了此参数，只有当警告来自指定行号时，`action` 才会被应用。
 - `append`：布尔值，指定是否将过滤规则追加到当前的警告过滤列表中。默认为 `False`，即替换当前的过滤规则。
 
-### 2.2.12. 使用示例
+### 2.2.15. 使用示例
 
 ```python
 import warnings
@@ -1869,7 +1766,7 @@ warnings.filterwarnings('once', category=RuntimeWarning, module='mymodule')
 
 使用 `warnings.filterwarnings()` 可以帮助开发者在开发过程中管理警告信息，避免被过多的警告干扰，同时也能够在需要时捕捉到重要的警告信息。
 
-### 2.2.13. \# noqa
+### 2.2.16. \# noqa
 
 在Python代码中，`# noqa` 是一个注释标记，用于告诉代码静态分析工具或者linter（例如Pylint、Flake8等）忽略当前行或特定行的警告或错误。这个标记通常用在代码中那些故意违反了某些编码规则，但又不希望因此产生linter警告的地方。
 
@@ -1889,7 +1786,7 @@ some_variable = 10  # noqa: F401
 
 使用`# noqa`是一种快速抑制警告的方法，但它应该谨慎使用，因为它可能会掩盖潜在的问题。最佳实践是尽量修正代码以符合linter的规则，而不是简单地忽略警告。
 
-### 2.2.14. def \_\_setitem\_\_()
+### 2.2.17. def \_\_setitem\_\_()
 
 `__setitem__` 方法是 Python 中的一个特殊方法（也称为魔术方法），它被用来实现对象的项赋值功能。当我们使用类似 `obj[1] = xxx` 这样的语法对对象的某个项进行赋值时，实际上会调用该对象的 `__setitem__` 方法。
 
@@ -1915,17 +1812,17 @@ print(my_list.data)  # 输出: ['Hello']
 
 在这个例子中，`MyList` 类有一个 `data` 属性，它是一个普通的 Python 列表。`__setitem__` 方法被定义为将值赋给 `data` 列表在 `index` 索引处的位置。当我们对 `my_list` 实例使用 `my_list[0] = 'Hello'` 这样的赋值语句时，实际上是在调用 `MyList` 类的 `__setitem__` 方法。
 
-### 2.2.15. random.choice(seq)
+### 2.2.18. random.choice(seq)
 
 `random.choice()` 方法是 Python 标准库中 `random` 模块提供的一个函数，它用于从给定的序列（如列表、元组等）中随机选择一个元素并返回。
 
-### 2.2.16. random.uniform(a, b)
+### 2.2.19. random.uniform(a, b)
 
 `random.uniform(a, b)` 函数是 Python 中 random 模块提供的一个函数，它用于生成一个指定范围内的随机浮点数。
 
 > 🔔范围是闭区间，包含`a`和`b`
 
-### 2.2.17. os.cpu_count()
+### 2.2.20. os.cpu_count()
 
 `os.cpu_count()` 是 Python 标准库 `os` 模块中的一个函数，用于返回当前机器上可用的 CPU 核心数。这个函数返回的值包括物理核心和逻辑核心（如果操作系统支持超线程技术，如 Intel 的 Hyper-Threading）。逻辑核心是现代多核处理器上的一个特性，它们允许单个物理核心同时处理多个线程。
 
@@ -1973,7 +1870,7 @@ L3 缓存:	33.0 MB
 os.cpu_count() = 28
 ```
 
-### 2.2.18. yield
+### 2.2.21. yield
 
 在编程中，`yield` 是一个关键字，它用于定义一个生成器（generator）函数。生成器是一种特殊类型的迭代器，它允许我们逐个产生值，而不是一次性计算并返回所有值。这使得生成器在处理大量数据时非常有用，因为它们可以帮助节省内存。
 
@@ -2044,7 +1941,7 @@ Countdown complete
 
 每次迭代都会打印当前的倒数值，直到倒数结束，然后打印 "Countdown complete"。这个生成器函数可以用于任何需要逐个处理序列值的场景，例如文件逐行读取、数据处理流水线等。
 
-### 2.2.19. \_\_name\_\_
+### 2.2.22. \_\_name\_\_
 
 在Python中，`.__name__` 是一个特殊的属性，用于获取一个模块、类、函数或方法的名称。这个属性是内置的，不需要我们手动设置。
 
