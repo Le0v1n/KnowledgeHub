@@ -49,6 +49,7 @@
 
 a,5=😦
 aa,5=😦
+aaliyr,5=https://mirrors.aliyun.com/pypi/simple
 anchor,5=<a id=></a>
 angry,5=😠
 bash,5=
@@ -97,6 +98,7 @@ dv,3=✅
 dypd,5=🔰
 email,5=📧
 eye,5=👀
+fadd,5=😐
 ffgexm,4===========  ==========
 ffgexm,5=----------  ----------
 ffgexm,3=>>>>>>  >>>>>>
@@ -186,15 +188,18 @@ juvs,5=
 </div>
 kbd,5=<kbd></kbd>
 kohc,5=〔〕
+ku,5=😎
 kuxn,5=😂
 kuxn,4=😅
 lajits,5=🗑️
 lifhti,5=🧊
 lqmhxk,5=✡️
 mifg,5=🐝
+mojk,5=😎
 music,5=🎵
 nerd,5=🤓
 new,5=🆕
+nqzd,5=🤠
 nv,5=watch -n 1 nvidia-smi
 nv,4=nvidia-smi
 nvidia,5=watch -n 1 nvidia-smi
@@ -259,6 +264,9 @@ wf,5=🤔
 wf,4=❓
 wf,6=❔
 wfjmjx,5=📂
+wjig,5=✅
+wjig,4=✔️
+wjig,6=√
 wjj,5=📂
 worry,5=😟
 xb,5=🧡
@@ -275,6 +283,7 @@ xx,5=↓
 ybyt,5=🎵
 yjjk,5=👀
 yjjk,4=👓
+yjjk,6=😎
 yy,5=☁️
 yy,4=🌥️
 yy,6=⛅
