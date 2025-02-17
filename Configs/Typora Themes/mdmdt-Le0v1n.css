@@ -400,6 +400,10 @@ ul > li > ol {
   margin-left: -2px;
 }
 
+ol > li > p {
+  margin: 0 0 0 0;  /* ✒️将原来的 -6px 改为 0 */
+}
+
 /*
  * ------------------------
  * code
@@ -1516,8 +1520,9 @@ p + .md-toc {
 .cm-s-inner .CodeMirror-matchingbracket {
   text-decoration: underline;
   color: var(--text-code) !important;
-}
-/* apply to code fences with plan text*/
+} */
+ 
+/* apply to code fences with plan text */
 /* .md-fences {
   background-color: var(--bg-color2);
   color: var(--text-grey);
