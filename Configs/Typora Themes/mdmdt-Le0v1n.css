@@ -81,7 +81,8 @@ body {
 
 /* 修改代码块字体 */
 code, pre {
-  font-family: 'HarmonyOS Sans SC Medium', monospace;
+  /* font-family: 'HarmonyOS Sans SC Medium', monospace; */
+  font-family: 'Sarasa Mono SC Semibold';
 }
 
 /*
@@ -128,10 +129,11 @@ header {
 */
 h1, h2, h3, h4, h5, h6 {
   position: relative;
-  line-height: 1.5;
-  margin: 32px 0 16px;
+  line-height: 1.4;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   color: var(--title-color);
-  letter-spacing: 2px;
+  /* letter-spacing: 2px; */
 }
 
 h1 {
@@ -1271,6 +1273,7 @@ span.md-comment {
   padding: 3px;
   border-radius: 5px;
 }
+
 /*
  * ------------------------
  * export html
