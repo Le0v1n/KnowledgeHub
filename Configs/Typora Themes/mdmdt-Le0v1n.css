@@ -1518,7 +1518,7 @@ p + .md-toc {
   color: var(--text-code) !important;
 }
 /* apply to code fences with plan text*/
-.md-fences {
+/* .md-fences {
   background-color: var(--bg-color2);
   color: var(--text-grey);
 }
