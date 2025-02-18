@@ -38,6 +38,7 @@
     <img src=./imgs_markdown/2025-02-10-10-45-34.png
     width=100%></br><center></center>
 </div>
+
 # 2. 大模型的使用与训练
 
 ## 2.1. 大模型的使用
