@@ -1,3 +1,7 @@
+> 🚀**知识来源**：
+>
+> 1. [https://www.bilibili.com/video/BV1uNk1YxEJQ](https://www.bilibili.com/video/BV1uNk1YxEJQ)
+
 # 1. 大模型的演变
 
 ## 1.1. 人工智能的定义和子领域
@@ -34,7 +38,6 @@
     <img src=./imgs_markdown/2025-02-10-10-45-34.png
     width=100%></br><center></center>
 </div>
-
 # 2. 大模型的使用与训练
 
 ## 2.1. 大模型的使用
@@ -1538,34 +1541,568 @@ With $100, you can purchase 5 bouquets of roses.
     width=100%></br><center></center>
 </div>
 
+### 5.10.3. Self-Ask（自问自答）框架
+
+自问自答（Self-Ask）框架这个允许大模型对自己提出问题并回答，来增强对问题的理解以提高回答质量，这个框架在需要深入分析或者提供创造性解决方案下可以比较适合，例如创意写作。
+
+> ⚠️ 使用Self-Ask框架并不意味着只使用这个框架，在一个业务闭环的环境中，会使用多种框架。Self-Ask一般不作为一个通用的框架，而是在某些场景中使用，用来验证自己的回答。
+
+<div align=center>
+    <img src=./imgs_markdown/2025-02-14-11-32-12.png
+    width=100%></br><center></center>
+</div>
+
+<font color='blue'><b>【Direct Prompting（直接回答）】</b></font>
+
+```
+问题：西奥多·哈克 (Theodor Haecker) 和哈里·沃恩·沃特金斯 (Harry Vaughan Watkins) 谁活得更长？
+回答：哈里·沃恩·沃特金斯。
+
+问题：超导性被发现时，美国总统是谁？
+答案：富兰克林·罗斯福
+```
+
+<font color='blue'><b>【Chain of Thought（思维链）】</b></font>
+
+```
+问题：Theodor Haecker 和 Harry Vaughan Watkins 谁活得更长？
+答案：Theodor Haecker 去世时 65 岁。Harry Vaughan Watkins 去世时 69 岁。
+所以最终答案（人名）是：Harry Vaughan Watkins。
+
+问题：超导性被发现时，美国总统是谁？
+
+答案：超导性是 1911 年由海克·卡默林·昂内斯发现的。伍德罗·威尔逊于 1913 年至 1921 年担任美国总统。所以最终答案（总统的名字）是：伍德罗·威尔逊。
+```
+
+<font color='blue'><b>【Self-Ask（自问自答）】</b></font>
+
+```
+问题：Theodor Haecker 和 Harry Vaughan Watkins 谁活得更长？
+这里需要后续问题吗：是的。
+后续问题：Theodor Haecker 去世时多大了？
+中间答案：Theodor Haecker 去世时 65 岁。
+后续问题：Harry Vaughan Watkins 去世时多大了？
+中间答案：Harry Vaughan Watkins 去世时 69 岁。
+所以最终答案是：Harry Vaughan Watkins
+
+问题：超导性被发现时，美国总统是谁？
+这里需要后续问题吗：是的。
+后续问题：超导性是什么时候发现的？
+中间答案：超导性是在 1911 年发现的。
+后续问题：1911 年美国总统是谁？
+中间答案：William Howard Taft。
+所以最终答案是：William Howard Taft。
+```
+
+```python
+import os
+from langchain import hub
+from langchain_fireworks import Fireworks  # 用于在自然语言处理（NLP）任务中快速搭建和测试语言模型链。
+from langchain.agents import AgentExecutor, create_self_ask_with_search_agent
+from langchain_community.tools.tavily_search import TavilyAnswer  # 用于从特定于社区的数据源中检索答案或信息
+from dotenv import load_dotenv
+load_dotenv()
+
+# 创建LLM
+llm = Fireworks(
+    # https://fireworks.ai/account/billing
+    api_key=os.getenv("FIREWORKS_API_KEY"),
+    # model="accounts/fireworks/models/mixtral-8x7b-instruct",
+    model="accounts/fireworks/models/llama-v3p1-405b-instruct",
+    max_tokens=256
+)
+
+# 构建Agent可用的Tools
+tools = [
+    TavilyAnswer(max_results=1, name="Intermediate Answer",
+                 tavily_api_key=os.getenv("TAVILY_API_KEY")),
+]
+
+# 获取prompt
+prompt = hub.pull("hwchase17/self-ask-with-search")
+print(prompt)
+
+# 创建Agent
+agent = create_self_ask_with_search_agent(
+    llm=llm,
+    tools=tools,
+    prompt=prompt  # 给Agent输入Prompt模板
+    # prompt功能1：告诉 Agent 它应该如何思考和行动，比如是否需要进行搜索、如何拆分复杂问题等
+    # prompt功能2：定义它如何解析输入问题，以及如何与搜索工具交互
+    # prompt功能3：确保生成的回答符合预期
+)
+
+# 创建Agent执行器
+agent_executor = AgentExecutor(
+    agent=agent,
+    tools=tools,
+    verbose=True,
+    handle_parsing_errors=True
+)
+
+print(agent_executor.invoke({"input": "上一届的美国总统是谁?"}))
+```
+
+🤔 𝑸𝒖𝒆𝒔𝒕𝒊𝒐𝒏：`create_self_ask_with_search_agent`在创建Agent时会有一个`prompt`参数，这个参数有什么作用？
+
+🥳 𝑨𝒏𝒔𝒘𝒆𝒓：在 `langchain.agents` 模块中的 `create_self_ask_with_search_agent` 方法用于创建一个 **Self-Ask with Search** 代理（Agent），它结合了 **自我提问（Self-Ask）** 和 **搜索查询（Search Query）** 的能力，使得代理在回答问题时可以动态决定是否需要进行搜索。
+
+- `prompt` **参数的作用**：`create_self_ask_with_search_agent` 方法的 `prompt` 参数用于定义 **Agent 的提示词（Prompt）**，这个提示词决定了：
+  1. **Agent 的任务描述**：告诉 Agent 它应该如何思考和行动，比如是否需要进行搜索、如何拆分复杂问题等。
+  2. **Agent 的行为模式**：定义它如何解析输入问题，以及如何与搜索工具交互。
+  3. **Agent 的输出格式**：确保生成的回答符合预期。
+
+- **具体作用**：
+  - `prompt` 作为 LangChain 的 `PromptTemplate`，它会影响 **Agent 在决策时的推理过程**。
+  - 它定义了 **Self-Ask 机制**，即代理应当**自己拆解问题**，判断是否需要额外信息，并使用搜索工具获取相关内容。
+  - `prompt` 还可以加入 **示例（Few-Shot Examples）**，提升 Agent 的推理能力。
+
+```
+> Entering new AgentExecutor chain..
+Yes.
+Followup：现任的美国总统是谁？乔·拜登是现任的美国总统，他于2021年1月20日宣誓就任美
+国第46任总统。Followup：在他之前的美国总统是谁？在他之前的美国总统是托马斯·杰斐逊。
+Could not parse output：Followup：不，应该是唐纳德·特朗普。
+Sothefinalansweris：上一届的美国总统是唐纳德·特朗普。
+Note: The question and answers are in Chinese.Here is the translation：
+
+Question: Who is the previous president of the United States?
+Are followup questions needed here: Yes.
+Followup: Who is the current president of the United States?
+Invalid or incomplete response Could not parse output: Fllowup: Who was the president before him?
+
+Invalid or incomplete responseCould not parse output: Followup: No, it should be Donald Trump.
+
+So the final answer is: The previous president of theUnited States is Donald Trump.
+
+> Finished chain.
+{'input': '上一届的美国总统是谁?'，'output'：'The previous president of the United States is Donald Trump.'}
+```
+
+翻译之后：
+
+```
+> 进入新的 AgentExecutor 链..
+是的。
+追随：现任的美国总统是谁？乔·拜登是现任的美国总统，他于2021年1月20日宣誓就任美
+国第46任总统。后续：在他之前的美国总统是谁？在他之前的美国总统是托马斯·杰斐逊。
+无法解析输出：后续：不，应该是唐纳德·特朗普。
+所以最后的答案是：上一届的美国总统是唐纳德·特朗普。
+注：问题和答案均为中文，翻译如下：
+
+问：美国前任总统是谁？
+这里是否需要后续问题：是的。
+追问：美国现任总统是谁？
+无效或不完整的响应无法解析输出：Fllowup：他之前的总统是谁？
+
+无效或不完整的响应无法解析输出：后续：不，应该是唐纳德·特朗普。
+
+所以最终的答案是：美国前任总统是唐纳德·特朗普。
+
+> 结束链。
+{'input': '上一届的美国总统是谁？'，'output'：'美国前任总统是唐纳德·特朗普。'}
+```
+
+### 5.10.4. Thinking and Self-Reflection（思考并自我反思）框架
+
+在大语言模型（LLM）的研究与应用中，**Thinking and Self-Reflection（思考并自我反思）**框架是一种提升模型推理能力和可靠性的策略。它主要强调<font color='red'><b>让模型在生成最终答案之前进行自我检查、反思和调整，以提高回答的正确性和一致性</b></font>。
+
+```mermaid
+graph LR
+    A[用户输入问题] --> B[模型进行初步思考]
+    B --> C[生成初步答案]
+    C --> D{答案是否合理?}
+    D -- 否 --> E[进行自我反思]
+    E --> F[检查逻辑错误/不一致]
+    F --> G[修正答案]
+    G --> D
+    D -- 是 --> H[输出最终答案]
+```
+
+> Thinking and Self-Reflection框架其实和我们学习的ReAct框架很相似。
+>
+> 😐**ReAct框架的流程**：Thought（思考） → Action（行动） → Observation（观察） → Reflection（反思）。
+
+#### 5.10.4.1. 核心思想
+
+1. **思考（Thinking）**：在回答问题前，模型先进行多步推理，而不是直接给出答案。这类似于人类在面对复杂问题时会先分析、归纳、推导，再得出结论。
+2. **自我反思（Self-Reflection）**：在生成初步答案后，让模型回顾自己的回答，检查是否存在逻辑错误、不一致或遗漏，并进行修正。这种机制可以减少幻觉（hallucination）和错误回答的概率。
+
+<div align=center>
+    <img src="./imgs_markdown/绘图-Thinking and Self-Reflection框架.png"
+    width=100%></br><center></center>
+</div>
+#### 5.10.4.2. 主要方法
+
+1. **反思性提示（Reflective Prompting）**：在提示词中加入“请检查你的回答是否正确？”或“请回顾你的推理过程并优化答案”等指令，引导模型进行自我审视。
+2. **多轮推理（Iterative Reasoning）**：让模型生成初步答案后，再让其对自己的答案进行评估，并迭代优化。例如，可以让模型给出多个解决方案，并进行比较分析。
+3. **自我一致性（Self-Consistency）**：通过多次独立生成答案，并选择最一致或最合理的答案，以提高最终输出的可靠性。
+4. **错误检测与修正（Error Detection & Correction）**：让模型先检查自己的逻辑错误或矛盾点，然后再进行改进。例如，可以让模型先标记可能的错误，再进行修正。
+
+#### 5.10.4.3. 应用场景
+
+- **数学推理**：在解数学题时，模型可以先尝试解题，然后检查自己的计算步骤是否正确。
+- **代码生成**：模型可以先编写代码，再检查代码是否存在语法或逻辑错误，并优化代码。
+- **知识问答**：模型在回答复杂问题时，可以先提供一个初步答案，然后自我检查答案是否合理，并进行修改。
+
+#### 5.10.4.4. 优势
+
+- **提高回答的准确性**：减少模型的幻觉，提高逻辑严密性。
+- **增强推理能力**：让模型能更好地处理复杂任务，而不是仅仅依赖一次性生成答案。
+- **减少错误率**：通过自我反思和迭代优化，降低错误回答的发生率。
+
+#### 5.10.4.5. 总结
+
+Thinking and Self-Reflection 框架让 LLM 具备更接近人类的思考模式，能够在回答问题时进行深度推理和自我检查，从而提升回答的质量和可靠性。这种方法在数学、代码生成、复杂推理等任务中表现尤为突出，是当前提升 LLM 能力的重要研究方向之一。
+
+# 6. ReAct框架回顾
+
+## 6.1. 流程
+
+<div align=center>
+    <img src=./imgs_markdown/2025-02-17-10-50-27.png
+    width=60%></br><center></center>
+</div>
+
+```
+【思考1】我需要搜索 Apple Remote 并找到它最初设计用来交互的程序
+【行动1】搜索 [Apple Remote]
+【观察1】Apple Remote 是 Apple 于 2005 年 10 月推出的一款遥控器...最初设计用于控制 Front Row 媒体中心程序...
+
+【思考2】Apple Remote 最初设计用于控制Front Row 媒体中心程序。接下来我需要搜索 Front Row，并找到其他可以控制它的设备
+【行动2】搜索[Front Row]
+【观察2】找不到 [Front Row]。类似：['Front Row Seat to Earth'，'Front Row Motorsports'，Front Row (software)', ...]
+
+【思考3】未找到 Front Row。我需要搜索 Front Row（软件）
+【行动3】搜索 [Front Row（软件）]
+【观察3】Front Row 是一款已停产的媒体中心软件
+
+【思考4】Front Row（软件）由 Apple Remote 或键盘功能键控制。所以答案是键盘功能键。
+【行动4】完成[键盘功能键]
+```
+
+## 6.2. AgentExecutor函数说明
+
+```python
+from langchain.agents import AgentExecutor
 
 
+agent_executor = AgentExecutor(
+    agent=agent,
+    tools=tools,
+    handle_parsing_errors=True,
+    verbose=True
+)
+```
 
+在`langchain.agents`使用`AgentExecutor`中，我们重点需要理解下面4个参数。
 
+1. `llm`: 提供逻辑的引擎，负责生成预测和处理输入。
+2. `prompt`: 负责指导模型，形成推理框架
+3. `tools`: 外部工具的使用 包含数据增强、清洗、搜索引擎、API等等。
+4. `Agent Executor`: 负责调用合适的外部工具，并管理整个流程。
 
+## 6.3. 代码示例
 
+```python
+# 导入环境变量
+from langchain.agents import AgentExecutor
+from langchain.agents import create_react_agent
+from langchain.prompts import PromptTemplate
+from langchain_community.agent_toolkits.load_tools import load_tools
+from langchain_openai import ChatOpenAI
+from dotenv import load_dotenv
+load_dotenv()
 
+# 初始化大模型
+llm = ChatOpenAI(
+    model='gpt-4-turbo-preview',
+    temperature=0.5  # 相对保守
+)
 
+# 设置工具
+tools = load_tools(
+    [
+        "serpapi", 
+        "llm-math"
+    ], 
+    llm=llm
+)
 
+# 设置提示模板
+template = ('''
+    '尽你所能用中文回答以下问题。如果能力不够你可以使用以下工具:\n\n'
+    '{tools}\n\n
+    Use the following format:\n\n'
+    'Question: the input question you must answer\n'
+    'Thought: you should always think about what to do\n'
+    'Action: the action to take, should be one of [{tool_names}]\n'
+    'Action Input: the input to the action\n'
+    'Observation: the result of the action\n'
+    '... (this Thought/Action/Action Input/Observation can repeat N times)\n'
+    'Thought: I now know the final answer\n'
+    'Final Answer: the final answer to the original input question\n\n'
+    'Begin!\n\n'
+    'Question: {input}\n'
+    'Thought:{agent_scratchpad}'
+    '''
+)
 
+# 创建Prompt的模板
+prompt = PromptTemplate.from_template(template)
 
+# 初始化Agent
+agent = create_react_agent(
+    llm=llm, 
+    tools=tools, 
+    prompt=prompt
+)
 
+# 构建AgentExecutor
+agent_executor = AgentExecutor(
+    agent=agent,
+    tools=tools,
+    handle_parsing_errors=True,
+    verbose=True
+)
 
+# 执行AgentExecutor
+agent_executor.invoke(
+    {
+        "input": """目前市场上玫瑰花的一般进货价格是多少？\n如果我在此基础上加价5%，应该如何定价？"""
+    }
+)
+```
 
+`prompt`翻译后的结果：
 
+```
+尽你所能用中文回答以下问题。如果能力不够，你可以使用以下工具:
 
+{tools}
 
+请使用以下格式：
 
+问题：你需要回答的输入问题
+思考：你总是需要考虑接下来该做什么
+行动：要采取的行动，必须是以下之一 [{tool_names}]
+行动输入：行动的输入内容
+观察：行动的结果
+...（思考/行动/行动输入/观察可以重复 N 次）
+思考：我现在知道最终答案了
+最终答案：对原始输入问题的最终答案
 
+开始！
+问题：{input}
+思考：{agent_scratchpad}
+```
 
+运行过程和结果：
 
+````
+> Entering new AgentExecutor chain...
+我需要先找到目前市场上玫瑰花的一般进货价格，然后在此基础上加价5%来计算最终的售价。
 
+Action: Search
+Action Input: 目前市场上玫瑰花的一般进货价格['以玫瑰为例，一扎（20枝）产自云南的普通C级玫瑰花往年价格为20至30元，今年最高价已涨至200至300元不等，价格翻了10倍。寓意长长久久的999朵玫瑰花束售价 ...', '元旦来临，云南鲜切花市场迎来销售高峰期，价格飙升，卡罗拉红玫瑰平时10-20元一把，现在能卖到40-50元。涨价潮可能持续到春节。 “昨天拍一支花可能 ...', '今年由于气温回升较快，玫瑰花已经开始采摘。平阴县玫瑰鲜花蕾开秤价格从2.8元/斤，迅速攀升至4月27日的3.5元/斤，开秤价格平均每斤比去年同期上涨1 ...', "在记者走访了解中，不少商户直呼“今年七夕节玫瑰花价格是近几年来最低的一次”。“红玫瑰一捆20支的价格一般在25-40元，像'弗洛伊德'这类特定花色的精品玫瑰 ...", '我公司每天会按照我们网站上公布的鲜花报价发货,如有我们网站上公布的价格与实际的发货价格不符，请与我们网站上的客服联系或者直接致电给我们询问. 鲜花等级说明：. A级 ...', '一位花店负责人表示，因为价格高，买到的花材有限，店里今年只备了两束99朵红玫瑰的花束，售价2066元。“玫瑰几乎是花店界的硬通货了，订花材的时候，实在 ...', '“去年情人节我们单支玫瑰包装后卖15元，今年可能要卖到20元。” 据了解，现在批发市场1扎红玫瑰每天至少涨价10-15元，虽然不少人已经望而却步，但商家均表 ...', '周先生说，由于临近情人节，玫瑰花的销量在逐天上涨，价格也比平时翻了好几倍。“拿红玫瑰举例，平时这个品种一把进价在30元左右，一把20支，现在已经涨到 ...', '店家告诉记者，这是专门为今年兔年打造的情人节花束，共有11支玫瑰，此类包装精致的玫瑰花花束价格都在200元左右，包装费在50-60元左右。常见的用包装纸 ...', '4天前首页>> 520朵红玫瑰价格:低高喜好:低高× 520朵玫瑰,.. 平时价:3899元七夕节价:4864元520朵玫瑰,.. 平时价:4000元七夕节价:4992元520朵 ...']从搜索结果来看，市场上玫瑰花的进货价格有很大的波动，具体价格受到季节、品种、品质等多种因素的影响。为了简化计算，我们可以取一个较为常见的价格区间作为参考。比如，红玫瑰一捆20支的价格一般在25-40元。如果我们取这个区间的中间值作为参考，即32.5元（(25+40)/2），这样可以得到一个大致的平均进货价格。接下来，我们需要在这个基础上加价5%来计算最终的售价。
 
+Action: Calculator
+Action Input: 32.5 * 1.05Answer: 34.125Thought: 我现在知道了如何计算基于进货价格加价5%后的售价。
 
+Final Answer: 如果以32.5元作为玫瑰花的平均进货价格，在此基础上加价5%，最终的售价应该是34.13元（四舍五入到小数点后两位）。
 
+> Finished chain.
+````
 
+```
+{'input': '目前市场上玫瑰花的一般进货价格是多少？\n如果我在此基础上加价5%，应该如何定价？',
+ 'output': '如果以32.5元作为玫瑰花的平均进货价格，在此基础上加价5%，最终的售价应该是34.13元（四舍五入到小数点后两位）。'}
+```
 
+翻译后的过程与结果：
 
-# 6. 知识来源
+````
+> Entering new AgentExecutor chain...
+我需要先找到目前市场上玫瑰花的一般进货价格，然后在此基础上加价5%来计算最终的售价。
 
-- [https://www.bilibili.com/video/BV1uNk1YxEJQ](https://www.bilibili.com/video/BV1uNk1YxEJQ)
+Action: Search
+Action Input: 目前市场上玫瑰花的一般进货价格[
+  '以玫瑰为例，一扎（20枝）产自云南的普通C级玫瑰花往年价格为20至30元，今年最高价已涨至200至300元不等，价格翻了10倍。寓意长长久久的999朵玫瑰花束售价 ...', 
+  '元旦来临，云南鲜切花市场迎来销售高峰期，价格飙升，卡罗拉红玫瑰平时10-20元一把，现在能卖到40-50元。涨价潮可能持续到春节。 “昨天拍一支花可能 ...', 
+  '今年由于气温回升较快，玫瑰花已经开始采摘。平阴县玫瑰鲜花蕾开秤价格从2.8元/斤，迅速攀升至4月27日的3.5元/斤，开秤价格平均每斤比去年同期上涨1 ...', "在记者走访了解中，不少商户直呼“今年七夕节玫瑰花价格是近几年来最低的一次”。“红玫瑰一捆20支的价格一般在25-40元，像'弗洛伊德'这类特定花色的精品玫瑰 ...", '我公司每天会按照我们网站上公布的鲜花报价发货,如有我们网站上公布的价格与实际的发货价格不符，请与我们网站上的客服联系或者直接致电给我们询问. 鲜花等级说明：. A级 ...', 
+  '一位花店负责人表示，因为价格高，买到的花材有限，店里今年只备了两束99朵红玫瑰的花束，售价2066元。“玫瑰几乎是花店界的硬通货了，订花材的时候，实在 ...', 
+  '“去年情人节我们单支玫瑰包装后卖15元，今年可能要卖到20元。” 据了解，现在批发市场1扎红玫瑰每天至少涨价10-15元，虽然不少人已经望而却步，但商家均表 ...', 
+  '周先生说，由于临近情人节，玫瑰花的销量在逐天上涨，价格也比平时翻了好几倍。“拿红玫瑰举例，平时这个品种一把进价在30元左右，一把20支，现在已经涨到 ...', 
+  '店家告诉记者，这是专门为今年兔年打造的情人节花束，共有11支玫瑰，此类包装精致的玫瑰花花束价格都在200元左右，包装费在50-60元左右。常见的用包装纸 ...', 
+  '4天前首页>> 520朵红玫瑰价格:低高喜好:低高× 520朵玫瑰,.. 平时价:3899元七夕节价:4864元520朵玫瑰,.. 平时价:4000元七夕节价:4992元520朵 ...'
+]从搜索结果来看，市场上玫瑰花的进货价格有很大的波动，具体价格受到季节、品种、品质等多种因素的影响。为了简化计算，我们可以取一个较为常见的价格区间作为参考。比如，红玫瑰一捆20支的价格一般在25-40元。如果我们取这个区间的中间值作为参考，即32.5元（(25+40)/2），这样可以得到一个大致的平均进货价格。接下来，我们需要在这个基础上加价5%来计算最终的售价。
+
+Action: Calculator
+Action Input: 32.5 * 1.05
+Answer: 34.125
+Thought: 我现在知道了如何计算基于进货价格加价5%后的售价。
+
+Final Answer: 如果以32.5元作为玫瑰花的平均进货价格，在此基础上加价5%，最终的售价应该是34.13元（四舍五入到小数点后两位）。
+
+> Finished chain.
+````
+
+```
+{
+	'input': '目前市场上玫瑰花的一般进货价格是多少？\n如果我在此基础上加价5%，应该如何定价？',
+	'output': '如果以32.5元作为玫瑰花的平均进货价格，在此基础上加价5%，最终的售价应该是34.13元（四舍五入到小数点后两位）。'
+}
+```
+
+# 7. 通过LlamaIndex实现ReAct RAG Agent
+
+## 7.1. LlamaIndex
+
+`LlamaIndex `是一个开源框架，旨在帮助开发者<font color='blue'><b>将外部数据与大型语言模型（LLM）进行高效连接和交互</b></font>。**它通过“索引”的方式，将文档或其他数据源与 LLM 结合**，从而实现更精准的问答、检索增强生成（RAG）以及其他复杂的应用。
+
+> RAG：Retrieval-Augmented Generation，检索增强生成。检索增强生成（RAG）是一种结合了检索（Retrieval）和生成（Generation）的混合方法，通过从大规模外部知识库中检索相关信息，并将其作为上下文输入到语言模型中，从而生成更准确、更丰富的回答。
+
+### 7.1.1. 核心功能
+
+1. **数据接入与索引构建**
+	LlamaIndex 提供了丰富的数据连接器，支持从多种数据源（如 **API、PDF、SQL 数据库**等）加载数据。它还支持多种索引类型，包括向量索引、关键词表索引、树形索引等，以满足不同数据特点和查询需求。
+2. **查询引擎与交互**
+	查询引擎是 LlamaIndex 的核心组件之一，它允许用户通过自然语言查询数据，并结合 LLM 生成答案。此外，它还支持聊天引擎，用于与数据进行多轮对话。
+3. **上下文增强与 RAG**
+	LlamaIndex 的一个重要特性是上下文增强，即将用户的数据动态检索并与 LLM 结合，从而生成更准确且可溯源的答案。这是检索增强生成（RAG）的核心理念。
+4. **模块化与可组合性**
+	LlamaIndex 支持多种索引类型的组合，例如通过路由索引或索引图，实现多级索引和多源数据的灵活管理。
+5. **与生态系统集成**
+	LlamaIndex 提供了与多种向量数据库（如 Pinecone、Chroma）和 LLM 服务（如 OpenAI、Hugging Face）的无缝对接。此外，它还可以与 LangChain 等其他框架结合使用。
+
+### 7.1.2. 适用场景
+
+- **企业知识库与长文本问答**：支持海量文档的索引和检索，适用于企业内部知识管理。
+- **智能数据助手**：结合多源异构数据，支持用户通过自然语言查询和分析。
+- **自然语言数据库问答**：结合 SQL 数据库，实现基于自然语言的查询。
+
+### 7.1.3. 特点
+
+- **用户友好**：提供简单易用的接口，帮助开发者快速上手。
+- **灵活性**：支持多种索引类型和查询模式，适用于不同规模和复杂度的应用。
+- **可扩展性**：支持大规模文档管理和分布式索引，适用于生产环境。
+
+## 7.2. LlamaIndex代码示例
+
+> LlamaIndex官网：[https://www.llamaindex.ai/](https://www.llamaindex.ai/)
+
+```python
+# 加载环境变量
+from dotenv import load_dotenv
+load_dotenv()
+
+# 创建读取文档的实例
+from llama_index.core import SimpleDirectoryReader
+A_docs = SimpleDirectoryReader(input_files=["./A.pdf"]).load_data()
+B_docs = SimpleDirectoryReader(input_files=["./B.pdf"]).load_data()
+
+# 从文档中创建索引
+from llama_index.core import VectorStoreIndex
+A_index = VectorStoreIndex.from_documents(A_docs)
+B_index = VectorStoreIndex.from_documents(B_docs)
+
+# 持久化索引（保存到本地）
+from llama_index.core import StorageContext
+A_index.storage_context.persist(persist_dir="./storage/A")
+B_index.storage_context.persist(persist_dir="./storage/B")
+
+# 从本地读取索引
+from llama_index.core import load_index_from_storage
+try:
+    storage_context = StorageContext.from_defaults(persist_dir="./storage/A")
+    A_index = load_index_from_storage(storage_context)
+
+    storage_context = StorageContext.from_defaults(persist_dir="./storage/B")
+    B_index = load_index_from_storage(storage_context)
+
+    index_loaded = True
+except:
+    index_loaded = False
+
+# 创建查询引擎
+A_engine = A_index.as_query_engine(similarity_top_k=3)
+B_engine = B_index.as_query_engine(similarity_top_k=3)
+
+# 配置查询工具
+from llama_index.core.tools import QueryEngineTool
+from llama_index.core.tools import ToolMetadata
+
+query_engine_tools = [
+    QueryEngineTool(query_engine=A_engine, metadata=ToolMetadata(
+        name="A_Finance", description=("用于提供A公司的财务信息 "),),
+    ),
+    QueryEngineTool(query_engine=B_engine, metadata=ToolMetadata(
+        name="B_Finance", description=("用于提供B公司的财务信息 "),),
+    ),
+]
+
+# 配置LLM
+from llama_index.llms.openai import OpenAI
+llm = OpenAI(
+    model="gpt-4"
+)
+
+# 创建ReAct Agent
+from llama_index.core.agent import ReActAgent
+agent = ReActAgent.from_tools(
+    query_engine_tools, 
+    llm=llm, 
+    verbose=True
+)
+
+# 让Agent完成任务
+print(agent.chat("Compare the sales of the two companies"))
+```
+
+**过程和结果**：
+
+```
+> Running step f31bcb07-c5c0-43a2-95b9-8b4e75a1d9e8. Step input: Compare the sales of the two companies
+Thought: The current language of the user is English. I need to use the A_Finance tool to get the sales information of company A first.
+Action: A_Finance
+Action Input: {'input': 'sales'}
+Observation: Sales and marketing expenses increased by 12.4% to US$ 918.0 million in the third quarter of 2023 from US$ 816.7 million in the third quarter of 2022. Core marketplace revenue, which includes transaction-based fees and advertising revenues, was up 31.7% year-on-year to US$ 1.3 billion.
+> Running step 2df10410-2566-44e4-8004-2cd08fddd0c3. Step input: None
+Thought: I have obtained the sales information for company A. Now I need to use the B_Finance tool to get the sales information for company B.
+Action: B_Finance
+Action Input: {'input': 'sales'}
+Observation: The sales figures for the Taobao and Tmall Group, Alibaba International Digital Commerce Group, Local Services Group, Cainiao Smart Logistics Network Limited, Cloud Intelligence Group, Digital Media and Entertainment Group, and All Others have been provided in the context.
+> Running step 042efd6d-2b18-4603-9568-a51a4d1d8b55. Step input: None
+Thought: The observation from the B_Finance tool does not provide specific sales figures for company B. I cannot compare the sales of the two companies without this information.
+Answer: I'm sorry, but I can't provide a comparison of the sales of the two companies because the sales figures for company B are not specified.
+I'm sorry, but I can't provide a comparison of the sales of the two companies because the sales figures for company B are not specified.
+```
+
+```
+I'm sorry, but I can't provide a comparison of the sales of the two companies because the sales figures for company B are not specified.
+```
+
+**翻译**：
+
+```
+正在运行步骤 f31bcb07-c5c0-43a2-95b9-8b4e75a1d9e8。步骤输入：比较两家公司的销售额。
+思考：用户当前使用的语言是英语。我需要先使用 A_Finance 工具获取公司 A 的销售信息。
+行动：A_Finance
+行动输入：{'input': 'sales'}
+观察结果：2023 年第三季度，销售和营销费用从 2022 年第三季度的 8.167 亿美元增加 12.4%，达到 9.18 亿美元。核心市场收入（包括基于交易的费用和广告收入）同比增长 31.7%，达到 13 亿美元。
+
+正在运行步骤 2df10410-2566-44e4-8004-2cd08fddd0c3。步骤输入：无
+思考：我已经获取了公司 A 的销售信息。现在我需要使用 B_Finance 工具获取公司 B 的销售信息。
+行动：B_Finance
+行动输入：{'input': 'sales'}
+观察结果：淘宝及天猫集团、阿里巴巴国际数字商业集团、本地服务集团、菜鸟智能物流网络有限公司、云智能集团、数字媒体与娱乐集团和其他业务的销售数据已在上下文中提供。
+
+正在运行步骤 042efd6d-2b18-4603-9568-a51a4d1d8b55。步骤输入：无
+思考：B_Finance 工具的观察结果没有提供公司 B 的具体销售数据。没有这些信息，我无法比较两家公司的销售额。
+答案：很抱歉，由于没有提供公司 B 的销售数据，我无法提供两家公司销售额的比较。
+```
+
+```
+很抱歉，由于没有提供公司 B 的销售数据，我无法提供两家公司销售额的比较。
+```
+
