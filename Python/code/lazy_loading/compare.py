@@ -55,12 +55,12 @@ def method_3_lazy_load():
 
 if __name__ == '__main__':
     # 定义图片文件夹路径
-    folder_path = "test-Le0v1n/images_38k"
+    folder_path = "test-Le0v1n/images_10k"
 
     method_1()
     print()
 
-    method_3_lazy_load()
+    method_2()
     print()
 
-    method_2()
+    method_3_lazy_load()

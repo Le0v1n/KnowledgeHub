@@ -73,7 +73,7 @@ def method_3_lazy_load():
 
 if __name__ == '__main__':
     # 定义图片文件夹路径
-    folder_path = "test-Le0v1n/images_38k"
+    folder_path = "test-Le0v1n/images_10k"
     
     method_1()
     print()
@@ -92,7 +92,7 @@ if __name__ == '__main__':
 
 [方法2] [加载耗时] 0.024818s
 [方法2] [图片数量] 1000
-[方法2] [第一张图片] test-Le0v1n/images_38k/image_1714117763041427800_722-4x4-5_0.jpg
+[方法2] [第一张图片] test-Le0v1n/images_10k/image_1714117763041427800_722-4x4-5_0.jpg
 [方法2] [程序总耗时] 6.909667s
 
 [方法3-Lazy Loading] [程序总耗时] 4.680766s
