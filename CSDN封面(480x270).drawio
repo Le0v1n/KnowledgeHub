@@ -1,4 +1,4 @@
-<mxfile host="Electron" modified="2025-02-24T02:31:32.626Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.6.4 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="FmXciNbS1SyQLZo3hm4E" version="24.6.4" type="device" pages="46">
+<mxfile host="Electron" modified="2025-03-03T07:48:27.510Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.6.4 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="UesN0nFgtLsiUK4y95c2" version="24.6.4" type="device" pages="47">
   <diagram name="LOGO" id="-zhb3GBFoAUP3NOcfG9p">
     <mxGraphModel dx="1194" dy="1066" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="480" pageHeight="270" math="0" shadow="0">
       <root>
@@ -36,6 +36,26 @@
         </mxCell>
         <mxCell id="R-Jw4D78UTk0HHoMF7UM-0" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://download.logo.wine/logo/Microsoft_Windows/Microsoft_Windows-Logo.wine.png;" parent="FS2vHGzdvkia62v9XX6N-1" vertex="1">
           <mxGeometry x="280" y="-105" width="149.86" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="将docker容器打包为.tar包" id="sTw0g3hKCf35hvDwpGDr">
+    <mxGraphModel dx="1420" dy="822" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="480" pageHeight="270" math="0" shadow="0">
+      <root>
+        <mxCell id="NO4Xs_60UWRoe1WEiBQc-0" />
+        <mxCell id="NO4Xs_60UWRoe1WEiBQc-1" parent="NO4Xs_60UWRoe1WEiBQc-0" />
+        <mxCell id="NO4Xs_60UWRoe1WEiBQc-2" value="" style="endArrow=none;html=1;rounded=0;strokeColor=#FF3333;strokeWidth=2;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;" edge="1" parent="NO4Xs_60UWRoe1WEiBQc-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="5" y="84" as="sourcePoint" />
+            <mxPoint x="478" y="84" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NO4Xs_60UWRoe1WEiBQc-7" value="将docker容器打包为.tar包" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=HarmonyOS Sans SC Medium;fontSize=48;fontStyle=1" vertex="1" parent="NO4Xs_60UWRoe1WEiBQc-1">
+          <mxGeometry x="15" y="109" width="450" height="127" as="geometry" />
+        </mxCell>
+        <mxCell id="7_vsbsquYqvyN9FK55Gv-1" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Docker_%28container_engine%29_logo.svg/2560px-Docker_%28container_engine%29_logo.svg.png;" vertex="1" parent="NO4Xs_60UWRoe1WEiBQc-1">
+          <mxGeometry x="44" width="391.59" height="93" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
