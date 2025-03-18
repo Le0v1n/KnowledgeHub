@@ -1,4 +1,5 @@
-﻿# 1. 软件名称及其链接
+﻿
+# 1. 软件名称及其链接
 
 ## 1.1 常用软件
 
@@ -15,11 +16,11 @@
 11. <kbd>Markdown 文档编写（本地）</kbd>：[VSCode](https://code.visualstudio.com/) | [Typora](https://typoraio.cn/)
 12. <kbd>Markdown 文档编写（云端）</kbd>：[语雀](https://www.yuque.com/about)（邀请码 SGXMFL :smile:）
 13. <kbd>图形绘制</kbd>：[draw.io(客户端)](https://github.com/jgraph/drawio/releases) | [draw.io(Web)](https://app.diagrams.net/)
-14. <kbd>截屏</kbd>：[Snipaste](https://www.snipaste.com/)
+14. <kbd>截屏</kbd>：🌟[PixPin](https://pixpin.cn/) | [Snipaste](https://www.snipaste.com/)
 15. <kbd>Office 公式编写</kbd>：MathType
 16. <kbd>邮箱</kbd>：[网易邮箱大师](https://dashi.163.com/download.html)
 17. <kbd>本地搜索文件</kbd>：[Everything](https://www.voidtools.com/zh-cn/)
-18. <kbd>桌面助手</kbd>：[360桌面助手](http://www.360.cn/desktop/)
+18. <kbd>桌面助手</kbd>：🌟[酷呆桌面（旧版）](https://www.coodesker.com/coodesker-desktop/Coodesker-x64_1.0.4.1.exe) | [360桌面助手](http://www.360.cn/desktop/)
 19. <kbd>远程连接</kbd>：[To Desk](https://www.todesk.com/)
 20. <kbd>按空格快速预览文件</kbd>：[QuickLook](https://github.com/QL-Win/QuickLook)
 21. <kbd>右键管理</kbd>：[ContextMenuManager](https://github.com/BluePointLilac/ContextMenuManager)
@@ -61,9 +62,25 @@
 15. <kbd>哔哩哔哩视频下载</kbd>：[BBDown](https://github.com/nilaoda/BBDown)
 16. <kbd>按键显示软件</kbd>：[Keyviz](https://github.com/mulaRahul/keyviz)（可以显示当前按下的按键）
 
+## 1.4 常见字体
+|   字体   | 对应英文名称                  | 规格     |
+| :------: | :---------------------------- | :------- |
+| 更纱黑体 | Sarasa Mono SC                | 常规     |
+| 更纱黑体 | Sarasa Mono SC SemiBold       | 半粗体   |
+| 更纱黑体 | Sarasa Mono SC SemiBoldItalic | 半粗斜体 |
+| 更纱黑体 | Sarasa Mono SC Bold           | 粗体     |
+| 更纱黑体 | Sarasa Mono SC BoldItalic     | 粗斜体   |
+| 更纱黑体 | Sarasa Mono SC XLight         | 特细     |
+| 更纱黑体 | Sarasa Mono SC XLightItalic   | 特细斜体 |
+| 更纱黑体 | Sarasa Mono SC light          | 细体     |
+| 更纱黑体 | Sarasa Mono SC LightItalic    | 细斜体   |
+| 更纱黑体 | Sarasa Mono SC Italic         | 斜体     |
+| 鸿蒙字体 | HarmonyOS Sans SC             | 常规     |
+| 混合像素字体| 'Fusion Pixel 12px Monospaced zh_hans'| 常规 |
 # 2. 常用网站
 
 1. [NVIDIA 显卡驱动下载](https://www.nvidia.cn/geforce/drivers/)
+
 
 # 3. VSCode 配置
 ## 3.1 VSCode 插件
@@ -134,7 +151,7 @@ VSCode 中的 Python 格式化默认使用 autopep8 格式化代码，默认长�
 
 <a></a>
 <div align=center>
-    <img src=https://img-blog.csdnimg.cn/direct/0c91c7efd8e34f44adbda4e8f45655c5.png
+    <img src=https://i-blog.csdnimg.cn/blog_migrate/b8d342721b0ecba301cac3c951cd8a19.png
     width=100%>
     <center></center>
 </div></br>
@@ -162,7 +179,7 @@ VSCode 中的 Python 格式化默认使用 autopep8 格式化代码，默认长�
 + 将该选项的复选框取消选中，这样就禁用了自动展开资源的功能。
 
 <div align=center>
-<img src=https://img-blog.csdnimg.cn/6b1a832dd26e4e90b2c313d3ce0addb4.png
+<img src=https://i-blog.csdnimg.cn/blog_migrate/41e9ca585de282b2d2bc57e0243fffe3.png
 	widh=100%>
 </div>
 
@@ -178,7 +195,7 @@ Consolas, Monaco, "Courier New", monospace, Consolas, "Courier New", monospace
 ```
 
 <div align=center>
-<img src=https://img-blog.csdnimg.cn/3e2ae95b8ec14a9986aa74eb8db78293.png
+<img src=https://i-blog.csdnimg.cn/blog_migrate/b83d7cb44c07f25d25e28fbde428e1a3.png
 width=40%>
 </div>
 
@@ -191,7 +208,7 @@ width=40%>
     ; -----------------------------------------------
     ; - WINDOW BEHAVIOR OPTIONS
     ; -----------------------------------------------
-
+   
     ; Start in full screen or windowed mode
     ; 'true' or 'false' to always start in full screen, respectively windowed mode
     ; 'auto' to choose best mode depending on image size of first image - windowed when it is small, full screen when it is large
@@ -206,11 +223,12 @@ width=40%>
 
 参考：[【最新】windows电脑FFmpeg安装教程手把手详解](https://www.cnblogs.com/wwwwariana/p/18191233)
 
-1. 下载 [ffmpeg-release-full.7z](https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z)
-2. 解压缩
-3. 放到合适的盘符中
-4. 复制`bin`文件夹的路径
-5. 将其添加到系统环境变量`Path`中，例如：`D:\Downloads\ffmpeg-7.0.1-full_build\bin`。
+1. 软件下载链接：[ffmpeg](https://www.gyan.dev/ffmpeg/builds/)
+2. 下载 [ffmpeg-release-full.7z](https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z)
+3. 解压缩
+4. 放到合适的盘符中
+5. 复制`bin`文件夹的路径
+6. 将其添加到系统环境变量`Path`中，例如：`D:\Downloads\ffmpeg-7.0.1-full_build\bin`。
 
 ### 5.1.1 压缩视频
 
