@@ -41,12 +41,12 @@ ONNX 规范由以下几个部分组成：
 
 主流的模型部署有两种路径，以 TensorRT 为例，一种是 `PyTorch->ONNX->TensorRT`，另一种是 `PyTorch->Caffe->TensorRT`，两种转换路径的对比如下：
 
-|属性|ONNX|Caffe|
-|:-|:-:|:-:|
-|灵活性|<font color='green'>高|<font color='red'>低|
-|op 粒度|<font color='green'>细粒度|<font color='red'>粗粒度|
-|条件分支|<font color='red'>不支持|<font color='green'>支持|
-|动态 shape|<font color='green'>支持|<font color='red'>不支持|
+| 属性       |            ONNX            |          Caffe           |
+| :--------- | :------------------------: | :----------------------: |
+| 灵活性     |   <font color='green'>高   |   <font color='red'>低   |
+| op 粒度    | <font color='green'>细粒度 | <font color='red'>粗粒度 |
+| 条件分支   |  <font color='red'>不支持  | <font color='green'>支持 |
+| 动态 shape |  <font color='green'>支持  | <font color='red'>不支持 |
 
 上面的表列了 ONNX 和 Caffe 的几点区别，其中最重要的区别就是 op 的粒度。举个例子，如果对 Bert 的 Attention 层做转换，ONNX 会把它变成 `MatMul, Scale, SoftMax` 的组合，而 Caffe 可能会直接生成一个叫做 `Multi-Head Attention` 的层，同时告诉 CUDA 工程师：“你去给我写一个大 kernel“（很怀疑发展到最后会不会把 ResNet50 都变成一个层 :joy:）
 
