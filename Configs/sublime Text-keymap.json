@@ -1,0 +1,35 @@
+[
+	// Chinese Words Cutter的快捷键
+	{ "keys": ["ctrl+left"], "command": "chinese_tokenizer_move", "args": {"forward": false} },
+	{ "keys": ["ctrl+right"], "command": "chinese_tokenizer_move", "args": {"forward": true} },
+	{ "keys": ["ctrl+backspace"], "command": "chinese_tokenizer_delete_word", "args": {"forward": false} },
+	{ "keys": ["ctrl+delete"], "command": "chinese_tokenizer_delete_word", "args": {"forward": true} },
+	{ "keys": ["ctrl+shift+left"], "command": "chinese_tokenizer_move", "args": {"forward": false, "extend": true} },
+	{ "keys": ["ctrl+shift+right"], "command": "chinese_tokenizer_move", "args": {"forward": true, "extend": true} },
+
+	// 选中当前词组
+	{ "keys": ["ctrl+w"], "command": "find_under_expand" },
+
+	// 快速开始下一行
+	{ "keys": ["shift+enter"], "command": "run_macro_file", "args": {"file": "res://Packages/Default/Add Line.sublime-macro"}, "context":
+		[
+			{ "key": "overlay_has_focus", "operator": "equal", "operand": false },
+		],
+	},
+
+	// 快速移动行
+	{ "keys": ["alt+shift+up"], "command": "swap_line_up" },
+	{ "keys": ["alt+shift+down"], "command": "swap_line_down" },
+
+	// 快速复制一行
+	{ "keys": ["ctrl+d"], "command": "duplicate_line" },
+
+	// 替换的快捷键
+	{ "keys": ["ctrl+h"], "command": "show_panel", "args": {"panel": "replace", "reverse": false} },
+	{ "keys": ["ctrl+r"], "command": "show_panel", "args": {"panel": "replace", "reverse": false} },
+
+	// 返回上一次编辑位置
+	{ "keys": ["alt+left"], "command": "jump_back" },
+	// 返回下一次编辑位置
+	{ "keys": ["alt+right"], "command": "jump_forward" },
+]

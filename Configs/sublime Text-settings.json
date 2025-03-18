@@ -1,0 +1,729 @@
+// 将设置放在 "Packages/User/Preferences.sublime-settings" 文件中，
+// 该文件会覆盖此处的默认设置。
+//
+// 设置也可以放在特定语法的设置文件中，例如：
+// 在 Packages/User/Python.sublime-settings 中设置 Python 文件的相关配置。
+{
+    // 设置文本区域使用的颜色方案。
+    // 值为 "auto" 时会根据操作系统外观在 "light_color_scheme" 和
+    // "dark_color_scheme" 之间自动切换。
+    "color_scheme": "Mariana.sublime-color-scheme",
+
+    // 当 "color_scheme" 设置为 "auto" 时的控制参数
+    "light_color_scheme": "Breakers.sublime-color-scheme",
+    "dark_color_scheme": "Mariana.sublime-color-scheme",
+
+    // 注意：font_face 和 font_size 会被平台特定的设置文件覆盖，
+    // 例如 "Preferences (Linux).sublime-settings"。
+    // 因此在此处设置不会生效：必须在用户偏好文件中进行设置。
+    "font_face": "等距更纱黑体 SC",
+    "font_size": 16,
+
+    // 所有平台通用选项：
+    //  - "no_bold": 禁用粗体文本
+    //  - "no_italic": 禁用斜体文本
+    // 抗锯齿选项：
+    //  - "no_antialias": 禁用抗锯齿
+    //  - "gray_antialias": 使用灰度抗锯齿替代子像素抗锯齿
+    // 连字选项：
+    //  - "no_liga": 禁用标准连字（OpenType liga 特性）
+    //  - "no_clig": 禁用上下文连字（OpenType clig 特性）
+    //  - "no_calt": 禁用上下文替换（OpenType calt 特性）
+    //  - "dlig": 启用 discretionary 连字（OpenType dlig 特性）
+    //  - "ss01": 启用 OpenType 风格集 1（通过修改最后两位数字可启用 1-10 号风格集）
+    // Windows 专有选项：
+    //  - "directwrite": （默认）使用 DirectWrite 进行字体渲染
+    //  - "gdi": 使用 GDI 进行字体渲染
+    //  - "dwrite_cleartype_classic": 仅适用于 "directwrite" 模式，
+    //        应呈现类似传统 GDI 的字体效果
+    //  - "dwrite_cleartype_natural": 仅适用于 "directwrite" 模式，
+    //        应呈现类似 ClearType "自然质量" GDI 的字体效果
+    //  - "subpixel_antialias": 当系统级禁用时强制使用 ClearType 抗锯齿
+    // Mac 专有选项：
+    //  - "no_round": 当 "font_size" 较小时，不为等宽字体的字形宽度取整。
+    "font_options": [],
+    // 主题文本的字体选项。有效选项与 "font_options" 相同，
+    // 但不支持 "no_bold" 和 "no_italic"
+    "theme_font_options": [],
+
+    // 用于分隔单词的字符
+    "word_separators": "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?（《【，。—·…！￥：；‘“”’？、】》）",
+
+    // 用于分隔子单词的字符
+    "sub_word_separators": "_",
+
+    // 设置为 false 可禁止在侧边栏显示行号
+    "line_numbers": true,
+
+    // 设置为 false 可完全隐藏侧边栏
+    "gutter": true,
+
+    // 侧边栏与文本之间的间距
+    "margin": 4,
+
+    // 折叠按钮是侧边栏中用于折叠文本区域的三角形符号
+    "fold_buttons": true,
+
+    // 除非鼠标悬停在侧边栏上，否则隐藏折叠按钮
+    "fade_fold_buttons": true,
+
+    // 使用的代码折叠样式
+    // - "auto": 使用当前语法的默认折叠方式
+    // - "force_indentation": 始终使用基于缩进的代码折叠
+    // - "scope_only": 仅允许基于作用域的代码折叠
+    "fold_style": "auto",
+
+    // 在侧边栏中显示修改行指示
+    // - true: 对所有文件启用修改行指示
+    // - "auto": 对 Git 跟踪文件启用修改行指示
+    // - false: 禁用修改行指示
+    "mini_diff": true,
+
+    // 显示垂直标尺的列位置。每个条目可以是列表形式，包含列号、标尺样式和可选的宽度，
+    // 例如：[[80, "solid", 2], 78, [90, "dotted"]]
+    "rulers": [],
+
+    // 控制标尺线的绘制方式
+    // - "dotted": 虚线
+    // - "stippled": 点线
+    // - "solid": 实线
+    "ruler_style": "dotted",
+
+    // 控制标尺线的宽度
+    "ruler_width": 1.0,
+
+    // 设置为 true 可默认开启拼写检查
+    "spell_check": false,
+
+    // 一个制表符（Tab）相当于的空格数量
+    "tab_size": 4,
+
+    // 设置为 true 时，按下制表符会插入空格
+    "translate_tabs_to_spaces": false,
+
+    // 如果 translate_tabs_to_spaces 为 true，use_tab_stops 会使制表符和退格键、删除键
+    // 插入/删除字符直到下一个制表位
+    "use_tab_stops": true,
+
+    // 设置为 false 可禁用加载时对制表符与空格缩进的检测
+    "detect_indentation": true,
+
+    // 按下回车键时自动计算缩进
+    "auto_indent": true,
+
+    // 让自动缩进更智能，例如在 C 语言的 if 语句后自动缩进下一行。需要开启 auto_indent。
+    "smart_indent": true,
+
+    // 缩进时在第一个左括号处添加空格。需要开启 auto_indent。
+    "indent_to_bracket": false,
+
+    // 当光标移开该行时，去除由自动缩进添加的空白字符
+    "trim_automatic_white_space": true,
+
+    // 若启用，将禁用水平滚动。
+    // 可以设置为 true、false 或 "auto"，设置为 "auto" 时，对于源代码会禁用水平滚动，其他情况则启用。
+    "word_wrap": "auto",
+
+    // 设置为非 0 值时，强制在该列而不是窗口宽度处进行换行。更多选项见 "wrap_width_style"。
+    "wrap_width": 0,
+
+    // 控制 "wrap_width" 设置的应用方式。可用选项如下：
+    // - "constant": 始终精确在换行宽度处换行。
+    // - "min": 如果可用空间不足，在换行宽度处或更窄处换行。
+    "wrap_width_style": "constant",
+
+    // 设置为 false 可防止自动换行的行缩进至相同级别
+    "indent_subsequent_lines": true,
+
+    // 使文本在窗口中居中显示，而非左对齐
+    "draw_centered": false,
+
+    // 控制引号、括号等的自动配对
+    "auto_match_enabled": true,
+
+    // 输入 </ 时自动闭合 HTML 和 XML 标签
+    "auto_close_tags": true,
+
+    // 用于拼写检查的单词列表。也可以是字典列表
+    "dictionary": "Packages/Language - English/en_US.dic",
+
+    // 设置检查拼写错误的作用域
+    "spelling_selector": "markup.raw, source string.quoted - punctuation - meta.preprocessor.include, source comment - source comment.block.preprocessor, -(source, constant, keyword, storage, support, variable, markup.underline.link, meta.tag)",
+
+    // 设置为 true 可在迷你地图上的可见矩形周围绘制边框。
+    // 边框颜色由配色方案中的 "minimap_border" 键决定
+    "draw_minimap_border": false,
+
+    // 始终在迷你地图上显示视口，而不是仅在鼠标悬停时显示
+    "always_show_minimap_viewport": false,
+
+    // 迷你地图是否应水平滚动以匹配视口
+    "minimap_horizontal_scrolling": false,
+
+    // 若启用，将高亮显示包含光标的行
+    "highlight_line": true,
+
+    // 若启用，将高亮显示包含光标的行对应的侧边栏
+    "highlight_gutter": true,
+
+    // 若启用，将根据配色方案高亮显示包含光标的行在侧边栏中的行号
+    "highlight_line_number": true,
+
+    // 有效值为 "smooth"、"phase"、"blink" 和 "solid"。
+    // 旧版本的 Sublime Text 默认使用 "smooth"
+    "caret_style": "solid",
+
+    // 这些设置控制光标的大小
+    "caret_extra_top": 4,
+    "caret_extra_bottom": 4,
+    "caret_extra_width": 1,
+
+    // 启用时，光标将绘制为矩形，宽度为当前字符的宽度
+    "block_caret": false,
+        // 设置为 false 可禁用对光标周围括号的下划线高亮显示
+    "match_brackets": true,
+
+    // 如果你希望仅在光标紧邻括号时才高亮显示括号，可设置为 false
+    "match_brackets_content": true,
+
+    // 设置为 false 可禁止高亮显示方括号。仅当 match_brackets 为 true 时此设置生效
+    "match_brackets_square": true,
+
+    // 设置为 false 可禁止高亮显示花括号。仅当 match_brackets 为 true 时此设置生效
+    "match_brackets_braces": true,
+
+    // 设置为 false 可禁止高亮显示尖括号。仅当 match_brackets 为 true 时此设置生效
+    "match_brackets_angle": false,
+
+    // 启用在 HTML 和 XML 中对匹配标签的可视化显示
+    "match_tags": true,
+
+    // 高亮显示当前选中文本的其他出现位置
+    "match_selection": true,
+
+    // 每行顶部的额外间距，单位为像素
+    "line_padding_top": 0,
+
+    // 每行底部的额外间距，单位为像素
+    "line_padding_bottom": 0,
+
+    // 设置为 false 可禁用滚动超过缓冲区末尾。
+    // 在 Mac 系统上，此值会被平台特定设置覆盖，因此你需要将此设置添加到用户设置中才能覆盖默认值。
+    //
+    // 此设置也可以设置为 0.0 到 1.0 之间的数字，以指定允许滚动超过缓冲区末尾的程度。
+    // 0.5 表示滚动到一半，0.0 等同于 false。
+    "scroll_past_end": true,
+
+    // 设置滚动显示时要显示的上下文行数。
+    // 这会影响所有选择更改操作，如选择拖动、翻页和移动光标。
+    "scroll_context_lines": 0,
+
+    // 此设置控制在第一行或最后一行按下上箭头或下箭头键时的行为。
+    // 在 Mac 系统上，此值会被平台特定设置覆盖，因此你需要将此设置添加到用户设置中才能覆盖默认值。
+    "move_to_limit_on_up_down": false,
+
+    // 控制何时绘制空白字符。可以组合以下任意选项：
+    // - "selection": 绘制当前选中区域下的空白字符。
+    // - "leading": 绘制行首到第一个字符之间的空白字符。
+    // - "enclosed": 绘制被其他字符包围的空白字符。
+    // - "trailing": 绘制行中最后一个字符后面的空白字符。
+    // - "isolated": 绘制仅包含空白字符的行中的空白字符。
+    // - "all": 以上所有情况，即始终绘制空白字符。
+    //
+    // 可以通过在选项后追加以下用下划线分隔的内容来进一步细化设置：
+    // - "none": 不绘制此类空白字符。
+    // - "tabs": 仅绘制制表符。
+    // - "spaces": 仅绘制空格。
+    // - "mixed": 仅绘制与缩进样式不匹配的空白字符。例如，如果 "translate_tabs_to_spaces" 为 true，则仅绘制制表符。
+    // - "mixed_tabs": 类似于 "mixed"，但仅绘制制表符。
+    // - "mixed_spaces": 类似于 "mixed"，但仅绘制空格。
+    // - "all": 同时绘制制表符和空格。这是默认设置。
+    //
+    // 注意：选项按顺序应用。因此，后面的选项可能会覆盖前面的选项。
+    //
+    // 示例：
+    // - ["selection", "trailing", "isolated"]:
+    //     绘制任何行末尾和选中区域下的空白字符。
+    //
+    // - ["all_tabs", "selection"]:
+    //     绘制任意位置的制表符和选中区域下的任何空白字符。
+    //
+    // - ["all_mixed"]:
+    //     绘制任何与缩进样式不匹配的空白字符。
+    //
+    // - ["leading_mixed", "isolated_mixed"]:
+    //     绘制任何与缩进样式不匹配的缩进空白字符。
+    //
+    // - ["selection_mixed_tabs"]:
+    //     仅在选中区域下且缩进样式为空格时绘制制表符。
+    //
+    // - ["all_tabs", "selection"]:
+    //     绘制所有制表符和选中区域下的任何空白字符。
+    //
+    // - ["all", "selection_none"]:
+    //     与默认设置相反。除了选中区域下，在其他所有位置绘制空白字符。
+    "draw_white_space": ["selection"],
+
+    // 控制非 ASCII 空白字符的显示方式
+    // - "none": 按原样显示 Unicode 空白字符（例如隐藏零宽空格）
+    // - "punctuation": 显示被定义为标点符号的 Unicode 空白字符（包括 NBSP，但不包括 CJK 表意空格）
+    // - "all": 显示所有非 ASCII 空白字符的代码点
+    "draw_unicode_white_space": "punctuation",
+
+    // 控制是否将 Unicode 双向字符显示为代码点
+    "draw_unicode_bidi": true,
+
+    // 控制字符（或启用时的空白字符）的显示方式：
+    // - "hex": 使用十六进制编码显示（如 <0xA0>）
+    // - "names": 使用缩写名称显示（如 <NBSP>）
+    "control_character_style": "hex",
+
+    // 控制选中区域描述（状态栏中的 "Line X, Column Y"）使用的列类型：
+    // - "virtual": 计算虚拟列（制表符按空格宽度计算）
+    // - "real": 计算实际列（制表符计为一列）
+    "selection_description_column_type": "virtual",
+
+    // 设置为 false 可关闭缩进参考线
+    // 缩进参考线的颜色和宽度可通过编辑对应的 .tmTheme 文件，使用 "guide", "activeGuide" 和 "stackGuide" 颜色定义
+    "draw_indent_guides": true,
+
+    // 控制缩进参考线的绘制方式。可组合以下选项：
+    //  - "draw_normal" - 为每个缩进组绘制普通参考线
+    //  - "draw_active" - 为包含光标的缩进组绘制不同颜色的参考线
+    //  - "draw_active_single" - 为包含光标的缩进组的最右侧参考线绘制不同颜色
+    //  - "solid" - 与其他选项组合时绘制实线而非点线
+    "indent_guide_options": ["draw_normal"],
+
+    // 控制保存时如何处理行尾空白：
+    // - "none": 不删除任何行尾空白
+    // - "all": 删除所有行尾空白
+    // - "not_on_caret": 仅删除不影响光标的空白（配合 "save_on_focus_lost" 使用可避免频繁跳行）
+    "trim_trailing_white_space_on_save": "none",
+
+    // 仅保存时修剪文件中被修改部分的空白。其他部分的行尾空白将保留
+    "trim_only_modified_white_space": true,
+
+    // 设置为 true 可确保保存时文件最后一行以换行符结尾
+    "ensure_newline_at_eof_on_save": false,
+
+    // 设置为 true 可在切换文件或应用时自动保存当前文件
+    "save_on_focus_lost": false,
+
+    // 无法自动检测编码时使用的回退编码
+    // ASCII、UTF-8 和 UTF-16 编码会被自动检测
+    "fallback_encoding": "Western (Windows 1252)",
+
+    // 新文件和未定义编码文件（如纯 ASCII 文件）的默认保存编码
+    // 已明确编码的文件会按原编码保存，忽略此设置
+    "default_encoding": "UTF-8",
+
+    // 包含空字节的文件默认以十六进制模式打开
+    "enable_hexadecimal_encoding": true,
+
+    // 控制新文件使用的行尾符类型
+    // 有效值为 'system'（操作系统默认）、'windows'（CRLF）和 'unix'（LF）
+    "default_line_ending": "system",
+
+    // 启用时，悬停单词会显示所有可能的定义位置弹出框。需要启用 index_files
+    "show_definitions": true,
+
+    // 启用时，按 Tab 键会插入最佳匹配的补全项
+    // 禁用时，Tab 键仅触发代码片段或插入制表符
+    // 启用 tab_completion 时，可使用 Shift+Tab 插入显式制表符
+    "tab_completion": true,
+
+    // 启用自动补全功能（输入时自动触发）
+    "auto_complete": true,
+
+    // 自动补全功能自动触发的最大文件大小
+    "auto_complete_size_limit": 4194304,
+
+    // 输入后自动完成窗口显示的延迟时间，单位为毫秒
+    "auto_complete_delay": 50,
+
+    // 控制自动完成功能会在哪些作用域中触发
+    "auto_complete_selector": "meta.tag, source - comment - string.quoted.double.block - string.quoted.single.block - string.unquoted.heredoc",
+
+    // 额外触发自动完成的情况
+    "auto_complete_triggers":
+    [
+        {"selector": "text.html, text.xml", "characters": "<",},
+        {"selector": "punctuation.accessor", "rhs_empty": true,},
+    ],
+
+    // 默认情况下，自动完成会在按下回车键时确认当前补全项。
+    // 此设置可用于改为在按下 Tab 键时确认补全。
+    // 使用 Tab 键确认补全通常是更好的选择，因为它消除了确认补全和插入换行符之间的歧义。
+    "auto_complete_commit_on_tab": false,
+
+    // 控制当代码片段字段处于活动状态时是否显示自动完成。
+    // 仅当 auto_complete_commit_on_tab 为 true 时此设置相关。
+    "auto_complete_with_fields": false,
+
+    // 控制在自动完成窗口中选中第一个项目时按下上箭头键的行为：如果为 false，窗口将隐藏；
+    // 否则，将选中窗口中的最后一个项目。同理，当选中最后一个项目时按下下箭头键也是如此。
+    "auto_complete_cycle": false,
+
+    // 启用此功能后，自动完成将使用索引数据从其他文件中提供补全项
+    "auto_complete_use_index": true,
+
+    // 是否自动选择之前选择过的补全项
+    "auto_complete_use_history": false,
+
+    // 控制在输入时自动完成结果的重新排序方式：
+    // - "none" 会根据补全项与输入文本的匹配程度完全重新排序结果。
+    // - "some" 会部分重新排序结果，同时考虑补全项与输入内容的匹配程度以及补全项的可能性。
+    // - "strict" 永远不会重新排序结果。
+    "auto_complete_preserve_order": "some",
+
+    // 如果自动完成引擎认为可能性足够大，添加尾随符号（例如 '.'、'()'）
+    "auto_complete_trailing_symbols": false,
+
+    // 如果自动完成引擎认为可能性足够大，在补全项后添加一个空格
+    "auto_complete_trailing_spaces": true,
+
+    // 当此设置为 false 时，代码片段将不会包含在自动完成中。
+    // 仍然可以通过输入代码片段的 Tab 触发词并在自动完成窗口未显示时按下 Tab 键来触发代码片段。
+    "auto_complete_include_snippets": true,
+
+    // 当此设置为 false 时，输入时代码片段不会出现在自动完成对话框中，
+    // 而是仅在显式触发自动完成对话框时显示。
+    "auto_complete_include_snippets_when_typing": true,
+
+    // 对于大于此大小的文件，将不会进行语法检测。这会显著加快大文件的加载速度。
+    // 设置为 0 则始终进行语法检测。默认值为 16MiB。
+    "syntax_detection_size_limit": 16777216,
+
+    // 一个通配符模式列表，指定要忽略的代码片段文件。
+    // 例如，要忽略所有默认的 C++ 代码片段，可将此设置为 ["C++/*"]
+    "ignored_snippets": [],
+
+    // 这些设置用于在输入时自动隐藏 UI 的各个部分。
+    // 移动鼠标将再次显示它们。
+    "auto_hide_menu": false,
+    "auto_hide_tabs": false,
+    "auto_hide_status_bar": false,
+
+    // 与 auto_hide_tabs 相关，如果启用此功能，切换文件时标签页会短暂显示。
+    // 恢复输入或经过固定时间后，标签页将自动隐藏。
+    "reveal_tabs_with_timeout": false,
+
+    // 设置为 false 时，在 Linux 和 Windows 系统上，当菜单隐藏时，按下 Alt 键点击不会显示菜单。
+    // 这不会影响自动隐藏或通过命令面板切换菜单的功能。
+    "reveal_menu": true,
+
+    // 如果为 true，输入时鼠标指针/光标将隐藏。移动指针将使其重新显示。此设置在 macOS 上无效。
+    "hide_pointer_while_typing": true,
+
+    // 默认情况下，只有当选择跨越多行时，Shift+Tab 才会取消缩进。
+    // 在其他时候按下 Shift+Tab 会插入一个制表符 —— 这允许在启用 tab_completion 时插入制表符。
+    // 将此设置为 true 可使 Shift+Tab 始终取消缩进，而不是插入制表符。
+    "shift_tab_unindent": false,
+
+    // 如果为 true，当选择为空时，复制和剪切命令将对当前行进行操作，而不是不执行任何操作。
+    "copy_with_empty_selection": true,
+
+    // 如果为 true，当查找面板显示时，所选文本将被复制到查找面板中。
+    // 在 Mac 系统上，此值会在特定平台设置中被覆盖。
+    "find_selected_text": true,
+
+    // 如果为 true，在进行正则表达式搜索时，从所选文本复制到查找面板的模式将自动进行转义。
+    "regex_auto_escape": true,
+
+    // 当 auto_find_in_selection 启用时，当选择多行文本时，“在选择范围内查找”标志将自动启用。
+    // 也可以使用 "find_only" 或 "replace_only" 分别仅为查找或替换面板启用此行为。
+    "auto_find_in_selection": false,
+
+    // 此设置决定在按下“全部查找”或“全部替换”按钮时，查找面板是否关闭。请注意，这不会改变快捷键绑定行为。
+    "close_find_after_find_all": true,
+    "close_find_after_replace_all": true,
+
+    // 是否在滚动条中突出显示查找结果
+    "highlight_find_results_in_scrollbar": true,
+
+    // 在滚动条中显示的最大查找结果数量。如果超过此数量，将不显示任何结果。使用 0 可移除该限制。
+    "find_scroll_highlights_limit": 8192,
+
+    // “突出显示匹配项”选项适用的最大文件大小。
+    // 突出显示所有匹配项需要在输入搜索查询时搜索整个文件，这可能会很快变慢。使用 0 可移除该限制。
+    "find_highlight_matches_max_size": 16777216, // 16MiB
+
+    // 与 "find_highlight_matches_max_size" 相同，但在启用正则表达式时使用。
+    "find_regex_highlight_matches_max_size": 1048576, // 1MiB
+
+    // 文件内查找的最大输出大小。防止具有大量结果的搜索使用过多内存。使用 0 可移除该限制。
+    "find_in_files_max_result_size": 16777216, // 16MiB
+
+    // 超过此大小的文件将被跳过。这可防止在存在大文件时搜索耗尽所有可用内存。请注意，在多核计算机上，可能会同时加载多个文件。使用 0 可移除该限制。
+    "find_in_files_max_file_size": 104857600, // 100MiB
+
+    // 以并排方式打开文件内查找的搜索结果。
+    "find_in_files_side_by_side": false,
+
+    // 为每个结果显示的上下文行数
+    "find_in_files_context_lines": 2,
+
+    // 在每行中围绕每个结果显示的字符数，超出此范围的文本将被省略。值为 0 将移除任何限制。
+    "find_in_files_context_characters": 300,
+
+    // 因无法打开和搜索文件而产生的错误消息将从结果中抑制显示
+    "find_in_files_suppress_errors": false,
+
+    // 当 drag_text 启用时，点击所选文本将开始拖放操作。
+    "drag_text": true,
+
+    // 当文件被拖放到 Sublime Text 上时获取焦点。在 Windows 系统上，此值会在特定平台设置中被覆盖为 true。
+    "focus_on_file_drop": false,
+
+    //
+    // 用户界面设置
+    //
+
+    // 主题控制 Sublime Text 用户界面（按钮、标签、滚动条等）的外观
+    // 值 "auto" 将根据操作系统外观在 "light_theme" 和 "dark_theme" 之间切换。
+    "theme": "Default Dark.sublime-theme",
+
+    // 当 "theme" 设置为 "auto" 时控制主题
+    "light_theme": "Default.sublime-theme",
+    "dark_theme": "Default Dark.sublime-theme",
+
+    // 仅适用于自适应主题：控制是否使用自定义或默认标题栏。
+    // 请注意，在 Windows 系统上，启用此设置且使用自适应主题时，将使用汉堡菜单。
+    "themed_title_bar": true,
+
+    // 控制默认主题、默认深色主题和自适应主题的文件标签样式。
+    // 选项："rounded"（圆角），"square"（方形）
+    // 值 "angled" 提供 Sublime Text 3 的标签样式，但仅与默认主题和自适应主题兼容，并且不支持像非活动面板变暗这样的新功能。
+    "file_tab_style": "rounded",
+
+    // 如果为 true，非活动的工作表（sheet）背景会稍有变化，让输入焦点更明显。
+    "inactive_sheet_dimming": true,
+
+    // 设置为 0 可禁用平滑滚动。设置为 0 到 1 之间的值可使滚动变慢，设置大于 1 的值可使滚动变快。
+    "scroll_speed": 1.0,
+
+    // 控制侧边栏展开或折叠文件夹时的动画效果。
+    "tree_animation_enabled": true,
+
+    // 控制整个应用程序的动画效果。
+    "animation_enabled": true,
+
+    // 让有修改的文件标签更显眼。
+    "highlight_modified_tabs": false,
+
+    // 设置为 false 时隐藏标签关闭按钮。
+    "show_tab_close_buttons": true,
+
+    // 确定关闭按钮在标签的哪一侧。
+    "show_tab_close_buttons_on_left": false,
+
+    // 在侧边栏中以粗体显示文件夹。
+    "bold_folder_labels": false,
+
+    // 使用自适应主题时，在用户界面的各部分之间绘制分隔线。
+    "adaptive_dividers": false,
+
+    // 在弹出窗口下方绘制阴影。
+    "popup_shadows": true,
+
+    // 仅适用于 Mac。控制在 macOS 10.12 及更高版本中使用系统原生标签。每个原生标签包含一个完整的项目，从而允许在单个窗口中打开多个项目。有效值为 "system"（系统默认）、"preferred"（首选）和 "disabled"（禁用）。
+    "native_tabs": "system",
+
+    // 新标签是优先在当前标签之后打开，还是在标签列表末尾打开。
+    "open_tabs_after_current": true,
+
+    // 有效值为 "system"（系统默认）、"enabled"（启用）和 "disabled"（禁用）
+    "overlay_scroll_bars": "system",
+
+    // 允许标签左右滚动，而不是简单地缩小。
+    "enable_tab_scrolling": true,
+
+    // 隐藏标签左右滚动的按钮，需要使用触控板或鼠标滚轮来滚动标签。
+    "hide_tab_scrolling_buttons": false,
+
+    // 隐藏新建标签按钮。
+    "hide_new_tab_button": false,
+
+    // 在状态栏中显示切换侧边栏的按钮。
+    "show_sidebar_button": true,
+
+    // 在状态栏中显示 Git 状态，需要启用 show_git_status 设置。
+    "show_git_status_in_status_bar": true,
+
+    // 在状态栏中显示文件编码。
+    "show_encoding": false,
+
+    // 在状态栏中显示行尾符信息。
+    "show_line_endings": false,
+
+    // 在状态栏中显示缩进信息。
+    "show_indentation": true,
+
+    // 在状态栏中显示语法信息。
+    "show_syntax": true,
+
+    // 在状态栏中以完整长度、紧凑形式显示行号和列号，或者完全隐藏。有效值为 "enabled"（启用）、"compact"（紧凑）和 "disabled"（禁用）
+    "show_line_column": "enabled",
+
+    // 在状态栏中显示拼写错误的单词。
+    "show_spelling_errors": true,
+
+    // 放大整个用户界面。更改此设置后，需要重启 Sublime Text 才能生效。1.0 是正常缩放比例，0.0 允许在不支持完整 GTK 显示缩放的旧 Linux 配置中根据文本缩放自动检测。
+    "ui_scale": 1.0,
+
+    // 启用硬件加速渲染。这会将渲染任务转移到你的 GPU，从而在高分辨率下实现更快的渲染。更改此设置需要重启应用程序才能生效。
+    // - "none": 使用 CPU 进行渲染。
+    // - "opengl": 使用 OpenGL 进行渲染，最低要求版本为 4.1。
+    // 在 Mac 系统上，此值会在特定平台设置中被覆盖。
+    "hardware_acceleration": "none",
+
+    //
+    // 应用程序行为设置
+    //
+
+    // 启用 hot_exit 后，退出应用程序时会立即关闭，不会有提示。未保存的修改和打开的文件会被保留，下次启动时恢复。
+    //
+    // 热退出有不同的模式可供选择：
+    // - "always": 应用程序退出时总是执行热退出。在相关平台上，关闭最后一个窗口时也会执行。
+    // - "only_on_quit": 仅在应用程序被要求退出时执行热退出，关闭最后一个窗口时不执行。此设置仅用于 Windows 和 Linux。
+    // - "disabled": 禁用热退出。
+    "hot_exit": "always",
+
+    // 启用 hot_exit_projects 后，关闭项目时会立即关闭，不会有提示。未保存的修改和打开的文件会保存在工作区文件中，重新打开时恢复。
+    "hot_exit_projects": true,
+
+    // remember_full_screen 允许 Sublime Text 在退出时处于全屏模式，则下次启动时也以全屏模式启动。设置为 false 时，Sublime Text 永远不会以全屏模式启动。
+    "remember_full_screen": false,
+
+    // remember_workspace 让 Sublime Text 记住每个窗口上次所在的工作区。设置为 false 时，由操作系统决定窗口在哪个工作区打开。在 Wayland 下此设置无效。
+    "remember_workspace": true,
+
+    // remember_layout 使 Sublime Text 以关闭时的布局启动。仅在禁用 hot_exit 时生效。
+    "remember_layout": false,
+
+    // Sublime Text 是否更新系统的最近文件/文件夹列表。
+    "update_system_recent_files": true,
+
+    // 仅适用于 Mac。是否调用用户的默认 shell 来获取用户自定义的环境变量。可以是布尔值，也可以是要调用的 shell 的路径字符串。更改此设置后，需要重启 Sublime Text 才能生效。
+    "shell_environment": true,
+
+    // 文件在磁盘上发生更改时是否重新加载。
+    "reload_file_on_change": true,
+
+    // 即使文件未被修改，重新加载文件前也总是提示。如果文件有未保存的更改，总会弹出提示。仅在 "reload_file_on_change" 为 true 时显示提示。
+    "always_prompt_for_file_reload": false,
+
+    // 重新打开 Sublime Text 时，关闭在文件系统中已被删除的已保存文件（未保存的文件不会关闭）。如果此设置为 false，不会关闭任何文件，而是将它们恢复为空文件。
+    //
+    // 在不稳定的网络文件系统中工作时，此设置很有用，因为如果连接断开，标签页不会丢失。
+    "close_deleted_files": true,
+
+    // 从文件资源管理器或命令行打开文件时，此设置控制是否创建新窗口。
+    // - "never": 除非没有打开的窗口，否则从不打开新窗口。
+    // - "always": 总是在新窗口中打开文件。
+    // - "finder_only": （仅适用于 macOS）仅从访达打开文件或将文件拖到 Dock 图标上时，在新窗口中打开文件。
+    //
+    // 在 Mac 系统上，此值会在特定平台设置中被覆盖。
+    "open_files_in_new_window": "never",
+
+    // 仅适用于 Mac：此设置控制启动时是否创建一个空窗口。
+    "create_window_at_startup": true,
+
+    // 仅适用于 Mac：在触控栏上显示最近文件。
+    "show_navigation_bar": true,
+
+    // 仅适用于 Mac：使用全局查找剪贴板。
+    "use_find_clipboard": true,
+
+    // 设置为 true 时，一旦最后一个文件关闭，就关闭窗口，除非窗口中打开了文件夹。
+    // 在 Mac 系统上，此值会在特定平台设置中被覆盖，因此你需要将此设置添加到用户设置中才能覆盖默认值。
+    "close_windows_when_empty": false,
+
+    // 在标题栏中显示文件的完整路径。在 Mac 系统上，此值会在特定平台设置中被覆盖，默认值为 false。
+    "show_full_path": true,
+
+    // 在标题栏中显示文件的相对路径。对于侧边栏中列出的文件，此设置会覆盖 show_full_path，但对于其他文件，仍使用 show_full_path。
+    "show_rel_path": false,
+
+    // 在标题栏中显示 "项目 - 文件" 还是 "文件 - 项目"。
+    "show_project_first": false,
+
+    // 构建时显示构建结果面板。如果设置为 false，可以通过 "工具/构建结果" 菜单显示构建结果。
+    "show_panel_on_build": true,
+
+    // 在发生构建错误的行下方显示错误信息。
+    "show_errors_inline": true,
+
+    // 在侧边栏的文件旁以及状态栏中显示 Git 仓库信息。修改此设置后，需要重启 Sublime Text 才能生效。
+    "show_git_status": true,
+
+    // 启用在用户主目录下的 Git 仓库显示 Git 状态。默认情况下此功能禁用，因为这通常是意外开启的，并且可能会因文件系统监控导致 CPU 高负载。
+    "allow_git_home_dir": false,
+
+    // 此设置决定跟踪的 Git 文件应该与索引（index）还是 HEAD 进行差异对比。
+    // 有效值为 "index" 或 "head"
+    "git_diff_target": "index",
+
+    // Sublime Merge 可执行文件的路径。仅当 Sublime Merge 未安装在标准位置（例如使用便携版安装）时才需要设置此值。设置为 'null' 可隐藏 Sublime Merge 集成。
+    "sublime_merge_path": "",
+
+    // 在侧边栏点击文件时预览文件内容。双击或编辑预览内容会打开文件并分配一个标签页。
+    // - true: 点击（包括右键点击）时总是预览
+    // - false: 从不预览
+    // - "only_left": 仅左键点击时预览，右键点击会更改选择但不预览文件
+    "preview_on_click": true,
+
+    // 控制在侧边栏点击已打开的单个文件时的行为。
+    // - true: 如果文件已在任何组中打开，将选中该文件。
+    // - false: 仅当文件在焦点组中打开时才会选中，否则会打开该文件的新视图。
+    "select_across_groups": false,
+
+    // 控制控制台历史记录中保留的最大行数。注意，较大的限制会增加内存使用量。设置为 0 可移除任何限制。
+    "console_max_history_lines": 3000,
+
+    // folder_exclude_patterns 和 file_exclude_patterns 控制侧边栏文件夹中列出哪些文件。这些设置也可以在每个项目的基础上进行设置。
+    "folder_exclude_patterns": [".svn", ".git", ".hg", "CVS", ".Trash", ".Trash-*"],
+    "file_exclude_patterns": ["*.pyc", "*.pyo", "*.exe", "*.dll", "*.obj","*.o", "*.a", "*.lib", "*.so", "*.dylib", "*.ncb", "*.sdf", "*.suo", "*.pdb", "*.idb", ".DS_Store", ".directory", "desktop.ini", "*.class", "*.psd", "*.db", "*.sublime-workspace"],
+    // 这些文件仍会显示在侧边栏中，但不会包含在 "快速打开" 或 "在文件中查找" 功能中
+    "binary_file_patterns": ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.ttf", "*.tga", "*.dds", "*.ico", "*.eot", "*.pdf", "*.swf", "*.jar", "*.zip"],
+
+    // 这些文件将以图像形式而非文本文件形式打开。仍可以通过 "文件" 菜单将文件以文本或图像形式打开
+    "image_file_patterns": ["*.jpeg", "*.jpg", "*.gif", "*.png", "*.ico", "*.bmp", "*.tga", "*.psd", "*.ppm", "*.pgm", "*.webp", "*.hdr"],
+
+    // 文件索引会解析侧边栏中的所有文件，并构建其符号索引。这是 "跳转到定义" 功能正常工作所必需的。
+    "index_files": true,
+
+    // 设置用于索引的线程数。值为 0 会让 Sublime Text 根据核心数进行猜测。使用 index_files 设置可禁用所有工作线程。修改此设置需要重启才能生效。
+    "index_workers": 0,
+
+    // 设置索引器是否应排除 Git 忽略的文件。
+    "index_exclude_gitignore": true,
+
+    // 是否应检查未知文件扩展名进行索引，还是完全跳过。如果某个文件扩展名未被识别，建议为该扩展名设置/更改默认语法，而不是关闭此设置。
+    "index_skip_unknown_extensions": true,
+
+    // index_exclude_patterns 指出哪些文件不会被索引。
+    "index_exclude_patterns": ["*.log"],
+
+    // 确定 "快速打开" 功能是否应排除 Git 忽略的文件。
+    "goto_anything_exclude_gitignore": false,
+
+    // 在 "快速打开" 中预览文件内容。
+    "goto_anything_file_preview": true,
+
+    // 当启用 Vintage（Vi 模拟包，见下面的 ignored_packages）时，此设置控制文件默认以命令模式还是插入模式打开。
+    "vintage_start_in_command_mode": false,
+
+    // 复制（Yank）命令可以将文本放置在内部寄存器或系统剪贴板中。
+    "vintage_use_clipboard": false,
+
+    // 默认情况下，Vintage 会将所有 Ctrl + <键> 快捷键绑定解释为普通的 Sublime Text 快捷键绑定。将此设置为 true 可使 Ctrl 键的行为与 Vim 中相同（例如，Ctrl + F 向前翻页）。
+    "vintage_ctrl_keys": false,
+
+    // 相对行号会将每行的行号显示为与当前行的距离。与 Vintage 结合使用很有用。
+    "relative_line_numbers": false,
+
+    // 在此列出要忽略的任何包。从此列表中移除条目时，如果该包包含插件，则可能需要重启。
+    "ignored_packages": ["Vintage",
+    ],
+}
