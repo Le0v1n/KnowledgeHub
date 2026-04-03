@@ -1,4 +1,4 @@
-<mxfile host="Electron" modified="2025-07-02T06:17:30.794Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.6.4 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="ExgFc83rTzjoTBw9ZnoW" version="24.6.4" type="device" pages="48">
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.6 Chrome/140.0.7339.249 Electron/38.8.0 Safari/537.36" version="29.3.6" pages="49">
   <diagram name="LOGO" id="-zhb3GBFoAUP3NOcfG9p">
     <mxGraphModel dx="1194" dy="1066" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="480" pageHeight="270" math="0" shadow="0">
       <root>
@@ -36,6 +36,26 @@
         </mxCell>
         <mxCell id="R-Jw4D78UTk0HHoMF7UM-0" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://download.logo.wine/logo/Microsoft_Windows/Microsoft_Windows-Logo.wine.png;" parent="FS2vHGzdvkia62v9XX6N-1" vertex="1">
           <mxGeometry x="280" y="-105" width="149.86" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="面向开发者的Prompt工程" id="JLq-l2mweJC5TzN2MC4Y">
+    <mxGraphModel dx="1540" dy="900" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="480" pageHeight="270" math="0" shadow="0">
+      <root>
+        <mxCell id="f1LnKy2l--ICS-sqAgFh-0" />
+        <mxCell id="f1LnKy2l--ICS-sqAgFh-1" parent="f1LnKy2l--ICS-sqAgFh-0" />
+        <mxCell id="f1LnKy2l--ICS-sqAgFh-2" edge="1" parent="f1LnKy2l--ICS-sqAgFh-1" style="endArrow=none;html=1;rounded=0;strokeColor=#FF3333;strokeWidth=2;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="5" y="84" as="sourcePoint" />
+            <mxPoint x="478" y="84" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f1LnKy2l--ICS-sqAgFh-3" parent="f1LnKy2l--ICS-sqAgFh-1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=HarmonyOS Sans SC Medium;fontSize=48;fontStyle=1" value="&lt;font style=&quot;font-size: 23px;&quot;&gt;ChatGPT Prompt Engineering for Developers&lt;/font&gt;&lt;div style=&quot;font-size: 24px; line-height: 130%;&quot;&gt;&lt;font style=&quot;font-size: 24px;&quot;&gt;面向开发者的Prompt工程&lt;/font&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="96" width="479" y="127" as="geometry" />
+        </mxCell>
+        <mxCell id="f1LnKy2l--ICS-sqAgFh-4" parent="f1LnKy2l--ICS-sqAgFh-1" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/e/e4/Tmux_logo.svg;" value="" vertex="1">
+          <mxGeometry height="81.42" width="309.42" x="85" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
