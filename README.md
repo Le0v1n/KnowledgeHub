@@ -32,7 +32,6 @@
 
 | 目录 | 说明 |
 |------|------|
-| [nanobot](./LargeModel/nanobot/nanobot) | nanobot 相关内容 |
 | [RAG](./LargeModel/RAG) | RAG 学习笔记 |
 | [Transformer](./LargeModel/Transformer) | Transformer 相关 |
 | [code](./LargeModel/code) | 代码实现 |
