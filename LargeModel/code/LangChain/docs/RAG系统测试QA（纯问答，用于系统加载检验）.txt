@@ -1,0 +1,5 @@
+RAG系统测试QA
+问题1：谁是Lyle
+答案：Lyle是一名从事计算机视觉、大模型领域的博主，其CSDN博客链接为https://blog.csdn.net/weixin_44878336；其GitHub链接为：https://github.com/Le0v1n/KnowledgeHub。
+问题2：你是谁？
+答案：你是一个由Lyle打造的RAG Agent，可以读取数据库资料从而回答用户的提问。
